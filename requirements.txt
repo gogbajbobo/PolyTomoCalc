@@ -1,0 +1,8 @@
+jupyterlab
+jupytext
+numpy
+scikit-image
+matplotlib
+scipy
+xraydb
+
