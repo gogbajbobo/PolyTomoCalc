@@ -13,12 +13,8 @@
 #     name: python3
 # ---
 
-# %% colab={"base_uri": "https://localhost:8080/"} id="EaZjr3PZkRG5" outputId="e11e85f8-2c60-4171-dd77-f603bfdd0c4c"
-# !pip install xraydb
-
 # %% id="rP2oSvmykXIF"
 import xraydb
-import pandas as pd
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
@@ -45,7 +41,7 @@ def extract_data(file_name):
 
 
 # %% colab={"base_uri": "https://localhost:8080/"} id="_A8FQwxNkhg8" outputId="4188dbc1-2d82-488e-ede8-32ae8348348c"
-spectrum = extract_data('/content/drive/MyDrive/Colab Data/Iohexol_samples/20230829 -- Mo-tube-poly-45kV .mca')
+spectrum = extract_data('/Users/grimax/Desktop/tmp/Iohexol_samples/20230829 -- Mo-tube-poly-45kV .mca')
 spectrum
 
 # %% colab={"base_uri": "https://localhost:8080/", "height": 430} id="NjXlyrXB3MPF" outputId="6f8409ee-9693-409a-9532-4ad2d7d7db43"
@@ -91,7 +87,7 @@ o_i = int(np.rint(m_ratio))
 print('H2O:', h_i, o_i)
 
 # %% colab={"base_uri": "https://localhost:8080/", "height": 447} id="xQMT_IXB_gAa" outputId="d28e970d-6268-4032-b182-1c2ab548e4ff"
-xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_i} O{o_i}', ihx_d_s2 * 2)
+xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_i} O{o_i}', ihx_d_s2)
 iohexol_mu = xraydb.material_mu('iohexol', en_keV*1000) / 10
 plt.plot(en_keV, iohexol_mu)
 plt.yscale('log')
@@ -102,7 +98,7 @@ print(iohexol_mu[371])
 
 # %% colab={"base_uri": "https://localhost:8080/", "height": 899} id="fJPXFdu3lOHN" outputId="c54a9ca9-da5b-4929-a4ee-f502a179e714"
 # input_path = '/content/drive/MyDrive/Colab Data/Iohexol_samples/e82c1068-5c0f-40c3-9dba-4e811b566344.npy'
-input_path = '/content/drive/MyDrive/Colab Data/Iohexol_samples/dbace4ca-3ba6-4a8a-b191-d52fe70c8a4f.npy'
+input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/dbace4ca-3ba6-4a8a-b191-d52fe70c8a4f.npy'
 with open(input_path, 'rb') as f:
   im = np.load(f)
 
@@ -125,6 +121,7 @@ print(np.mean(im[650, 200:1000]))
 # %% colab={"base_uri": "https://localhost:8080/", "height": 448} id="ekjVVd3cUVzK" outputId="da69431d-076a-4a56-9a81-4ee005f5a187"
 att_air = np.exp(-xraydb.material_mu('air', en_keV*1000) * 144)
 plt.plot(en_keV, att_air)
+# plt.yscale('log')
 
 # %% colab={"base_uri": "https://localhost:8080/", "height": 430} id="4KCZR_iOU8KB" outputId="d8253c1e-19c6-44a5-fc70-3862db0cdd51"
 spectrum_filtered = sp.ndimage.gaussian_filter(spectrum, sigma=1) * att_air
@@ -268,7 +265,7 @@ voxel_size = 0.0009 # in cm — 0.001 = 10µm
 calc_object_mus_from_spectrum(bim, gaussian(im), spectrum_filtered, en_keV*1000, iohexol_mu*10, voxel_size)
 
 # %% colab={"base_uri": "https://localhost:8080/", "height": 899} id="QKSMj2DJrkEb" outputId="ff1568af-620c-4c60-e443-e34a2b999300"
-input_path = '/content/drive/MyDrive/Colab Data/Iohexol_samples/e82c1068-5c0f-40c3-9dba-4e811b566344.npy'
+input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/e82c1068-5c0f-40c3-9dba-4e811b566344.npy'
 with open(input_path, 'rb') as f:
   im_mono = np.load(f)
 
