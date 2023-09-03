@@ -162,6 +162,7 @@ plt.show()
 xraydb.add_material('GOS', 'Gd2O2S', 7.34)
 GOS_mus = xraydb.material_mu('GOS', en_keV*1000) / 10
 GOS_t = np.exp(-GOS_mus * 22 * 0.001) # (22 * 0.001)mm == 22µm
+# GOS_t = np.exp(-GOS_mus * 11 * 0.001)
 beta = 3
 en_gap = 4.6 # eV
 
