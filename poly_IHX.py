@@ -341,3 +341,16 @@ voxel_size = 0.0009 # in cm — 0.001 = 10µm
 calc_object_mus_from_spectrum(bim, gaussian(im), sf, en_keV*1000, iohexol_mu*10, voxel_size)
 
 # %%
+_, s20 = generate_spectrum(20, 45, 'Mo', energies=en_keV)
+s20 /= s20.sum()
+s20 = s20 * att_air
+s20 /= s20.sum()
+
+# %%
+plt.plot(en_keV, sf)
+plt.plot(en_keV, s20)
+plt.grid()
+plt.ylim([1e-6, 5e-1])
+plt.yscale('log')
+
+# %%
