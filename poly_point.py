@@ -140,42 +140,78 @@ print(bim[line_y].sum())
 print(recon_point_sum)
 
 # %%
-voxel_size = 0.0009 # in cm — 0.001 = 10µm
+voxel_size = 0.009 # in mm — 0.01 = 10µm
 
-ray_sums = bim[line_y].sum() * voxel_size
-trans_sums = np.exp(-iohexol_mu * ray_sums)
+ray_sum = bim[line_y].sum() * voxel_size
+trans_sum = np.exp(-iohexol_mu * ray_sum)
 
-plt.plot(en_keV, trans_sums)
+print(ray_sum)
+
+plt.plot(en_keV, trans_sum)
 plt.grid()
 
 # %%
-spectrum_passed = spectrum_filtered * trans_sums
+spectrum_passed = spectrum_filtered * trans_sum
 
 plt.plot(en_keV, spectrum_filtered)
 plt.plot(en_keV, spectrum_passed)
 plt.yscale('log')
+plt.grid()
+plt.show()
+
+xraydb.add_material('GOS', 'Gd2O2S', 7.34)
+GOS_mus = xraydb.material_mu('GOS', en_keV*1000) / 10
+GOS_t = np.exp(-GOS_mus * 22 * 0.001) # (22 * 0.001)mm == 22µm
+beta = 3
+en_gap = 4.6 # eV
+
+GOS_n_p = en_keV*1000 / (beta * en_gap)
+GOS_eff = GOS_n_p * (1 - GOS_t)
+
+plt.plot(en_keV, GOS_t)
+plt.grid()
+plt.show()
+plt.plot(en_keV, GOS_n_p)
+plt.grid()
+plt.show()
+plt.plot(en_keV, GOS_eff)
+plt.grid()
+plt.show()
+
+sf_GOS = spectrum_filtered * GOS_eff
+sp_GOS = spectrum_passed * GOS_eff
+
+intensity = spectrum_passed.sum() / spectrum_filtered.sum()
+intensity_GOS = sp_GOS.sum() / sf_GOS.sum()
 
 print(f'intensity flat: {spectrum_filtered.sum()}')
 print(f'intensity passed: {spectrum_passed.sum()}')
-
-intensity = spectrum_passed.sum() / spectrum_filtered.sum()
 print(f'intensity: {intensity}')
+print(f'intensity_GOS: {intensity_GOS}')
 print(f'model point sum: {-np.log(intensity) / voxel_size}')
+print(f'GOS model point sum: {-np.log(intensity_GOS) / voxel_size}')
 print(f'recon point sum: {recon_point_sum}')
 
 
 # %%
 def point_sum_calc(spectrum_filtered):
 
-    voxel_size = 0.0009 # in cm — 0.001 = 10µm
+    voxel_size = 0.009 # in mm — 0.01 = 10µm
 
-    ray_sums = bim[line_y].sum() * voxel_size
-    trans_sums = np.exp(-iohexol_mu * ray_sums)
-    spectrum_passed = spectrum_filtered * trans_sums
-    
+    ray_sum = bim[line_y].sum() * voxel_size
+    trans_sum = np.exp(-iohexol_mu * ray_sum)
+    spectrum_passed = spectrum_filtered * trans_sum
+
+    sf_GOS = spectrum_filtered * GOS_eff
+    sp_GOS = spectrum_passed * GOS_eff
+
     intensity = spectrum_passed.sum() / spectrum_filtered.sum()
+    intensity_GOS = sp_GOS.sum() / sf_GOS.sum()
+
     print(f'intensity: {intensity}')
+    print(f'intensity_GOS: {intensity_GOS}')
     print(f'model point sum: {-np.log(intensity) / voxel_size}')
+    print(f'GOS model point sum: {-np.log(intensity_GOS) / voxel_size}')
     print(f'recon point sum: {recon_point_sum}')
 
 
@@ -184,11 +220,26 @@ def point_sum_calc(spectrum_filtered):
 point_sum_calc(spectrum_filtered)
 
 # %%
-test = np.ones(spectrum_filtered.shape)
-test /= test.sum()
-
-point_sum_calc(test)
+from spec_gen import generate_spectrum
 
 # %%
+_, s = generate_spectrum(40, 45, 'Mo', energies=en_keV)
+s /= s.sum()
+sf = s * att_air
+sf /= sf.sum()
+
+# %%
+plt.plot(en_keV, s)
+plt.plot(en_keV, sf)
+plt.plot(en_keV, spectrum_filtered)
+plt.grid()
+plt.ylim([1e-6, 5e-1])
+plt.yscale('log')
+
+# %%
+point_sum_calc(spectrum_filtered)
+
+# %%
+point_sum_calc(sf)
 
 # %%
