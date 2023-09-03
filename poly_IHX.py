@@ -21,6 +21,7 @@ import matplotlib.pyplot as plt
 
 from skimage.filters import threshold_otsu, gaussian, median
 from skimage.transform import rotate, iradon, iradon_sart
+from spec_gen import generate_spectrum
 
 
 # %% id="LhzCFhee27MO"
@@ -320,5 +321,23 @@ plt.plot(en_keV, GOS_t)
 plt.show()
 
 # %% id="0n41L95qz6Ce"
+_, s = generate_spectrum(40, 45, 'Mo', energies=en_keV)
+s /= s.sum()
+sf = s * att_air
+sf /= sf.sum()
+
+# %%
+plt.plot(en_keV, s)
+plt.plot(en_keV, sf)
+plt.plot(en_keV, spectrum_filtered)
+plt.grid()
+plt.ylim([1e-6, 5e-1])
+plt.yscale('log')
 
 # %% id="TISaAE07AbbB"
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+# wo_GOS, w_GOS, diff_GOS = calc_object_mus_from_spectrum(bim, gaussian(im), spectrum_filtered, en_keV*1000, iohexol_mu*10, voxel_size)
+calc_object_mus_from_spectrum(bim, gaussian(im), sf, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
