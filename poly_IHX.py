@@ -174,21 +174,21 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, energies, mat_att, v
 
   angles = np.arange(0, 180, 1)
   sino_shape = (angles.size, bin_im.shape[0])
-  # sinogram_wo_GOS = np.zeros(sino_shape)
+  sinogram_wo_GOS = np.zeros(sino_shape)
   sinogram_GOS = np.zeros(sino_shape)
   # sinogram_GOS_diff = np.zeros(sino_shape)
 
-  Be_mus = xraydb.material_mu('beryllium', energies)
-  Be_t = np.exp(-Be_mus * 0.05)
+  # Be_mus = xraydb.material_mu('beryllium', energies)
+  # Be_t = np.exp(-Be_mus * 0.05)
 
-  Xe_mus = xraydb.material_mu('xenon', energies)
-  Xe_t = np.exp(-Xe_mus * 0.2)
+  # Xe_mus = xraydb.material_mu('xenon', energies)
+  # Xe_t = np.exp(-Xe_mus * 0.2)
 
-  current_spec_GOS = spectrum * Be_t
-  current_spec_GOS *= Xe_t
-  current_spec_GOS *= GOS_eff
+  # current_spec_GOS = spectrum * Be_t
+  # current_spec_GOS *= Xe_t
+  # current_spec_GOS *= GOS_eff
 
-  # current_spec_GOS = spectrum * GOS_eff
+  current_spec_GOS = spectrum * GOS_eff
 
   for j, angle in enumerate(angles):
 
@@ -199,25 +199,25 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, energies, mat_att, v
     # diff_t[ray_sums == 0] = 1
 
     passed_specs_wo_GOS = trans_sums * spectrum
-    passed_specs_wo_GOS *= Be_t
-    passed_specs_wo_GOS *= Xe_t
+    # passed_specs_wo_GOS *= Be_t
+    # passed_specs_wo_GOS *= Xe_t
     passed_specs_GOS = passed_specs_wo_GOS * GOS_eff
     # passed_specs_GOS_diff = (passed_specs_wo_GOS.T * diff_t).T * GOS_eff
     passed_specs_GOS /= current_spec_GOS.sum()
     # passed_specs_GOS_diff /= current_spec_GOS.sum()
 
-    # passed_intensity_wo_GOS = np.sum(passed_specs_wo_GOS, axis=1)
+    passed_intensity_wo_GOS = np.sum(passed_specs_wo_GOS, axis=1)
     passed_intensity_GOS = np.sum(passed_specs_GOS, axis=1)
     # passed_intensity_GOS_diff = np.sum(passed_specs_GOS_diff, axis=1)
 
-    # sinogram_wo_GOS[j] = -np.log(passed_intensity_wo_GOS)
+    sinogram_wo_GOS[j] = -np.log(passed_intensity_wo_GOS)
     sinogram_GOS[j] = -np.log(passed_intensity_GOS)
     # sinogram_GOS_diff[j] = -np.log(passed_intensity_GOS_diff)
 
-  # recon_wo_GOS = gaussian(iradon(sinogram_wo_GOS.T, theta=angles).T)
-  # recon_wo_GOS[bin_im == 0] = 0
-  # recon_wo_GOS[recon_wo_GOS < 0] = 0
-  # recon_wo_GOS /= voxel_size * 10 # convert to 1/mm values
+  recon_wo_GOS = gaussian(iradon(sinogram_wo_GOS.T, theta=angles).T)
+  recon_wo_GOS[bin_im == 0] = 0
+  recon_wo_GOS[recon_wo_GOS < 0] = 0
+  recon_wo_GOS /= voxel_size * 10 # convert to 1/mm values
   # recon_wo_GOS *= 2
 
   recon_GOS = gaussian(iradon(sinogram_GOS.T, theta=angles).T)
@@ -232,7 +232,7 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, energies, mat_att, v
   # recon_GOS_diff /= voxel_size * 10 # convert to 1/mm values
 
   fig, ax = plt.subplots(1, 4, figsize=(20, 5))
-  # im0 = ax[0].imshow(recon_wo_GOS)
+  im0 = ax[0].imshow(recon_wo_GOS)
   # plt.colorbar(im0, ax=ax[0])
   im1 = ax[1].imshow(recon_GOS)
   plt.colorbar(im1, ax=ax[1])
@@ -244,7 +244,7 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, energies, mat_att, v
 
   row = bin_im.shape[0] // 2
   plt.figure(figsize=(10, 5))
-  # plt.plot(recon_wo_GOS[row], linewidth=.5, c='green')
+  plt.plot(recon_wo_GOS[row], linewidth=.5, c='green')
   plt.plot(recon_GOS[row], linewidth=.5)
   # plt.plot(recon_GOS_diff[row], linewidth=.5, c='red')
 
