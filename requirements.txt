@@ -7,3 +7,4 @@ scipy
 xraydb
 pandas
 
+# spekpy-2.0.10 — see https://bitbucket.org/spekpy/spekpy_release/wiki/Home
