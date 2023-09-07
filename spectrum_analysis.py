@@ -93,3 +93,6 @@ plt.plot(spectrum1['keV'], spec_nf_corrected_1)
 plt.yscale('log')
 
 # %%
+np.save('Mo_spec_poly_50', spec_nf_corrected_1)
+
+# %%
