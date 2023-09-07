@@ -164,6 +164,7 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, energies, mat_att, v
   xraydb.add_material('GOS', 'Gd2O2S', 7.34)
   GOS_mus = xraydb.material_mu('GOS', energies)
   GOS_t = np.exp(-GOS_mus * 22 * 0.0001) # (22 * 0.0001)cm == 22µm
+  # GOS_t = np.exp(-GOS_mus * 88 * 0.0001)
   beta = 3
   en_gap = 4.6 # eV
 
@@ -352,5 +353,281 @@ plt.plot(en_keV, s20)
 plt.grid()
 plt.ylim([1e-6, 5e-1])
 plt.yscale('log')
+
+# %%
+ihx_d = 2.2 #g/cm3
+wat_d = 0.997
+ihx_w = 0.647 #g
+ihx_d_s1 = ihx_w + wat_d * (1 - ihx_w/ihx_d)
+print(ihx_d_s1)
+
+ihx_p = 1
+wat_p = 1
+ihx_d_s2 = (ihx_d_s1 * ihx_p + wat_d * wat_p) / (ihx_p + wat_p)
+
+print('solution density:', ihx_d_s2)
+
+ihx_mm = 821.144 #g/mol
+wat_mm = 18.01528
+
+ihx_m = ihx_w * ihx_p / ihx_mm # mol
+wat_m = (wat_d * (1 - ihx_w/ihx_d) * ihx_p + wat_d * wat_p) / wat_mm
+print(ihx_m)
+print(wat_m)
+
+m_ratio = wat_m / ihx_m
+print(m_ratio)
+h_i = int(np.rint(m_ratio * 2))
+o_i = int(np.rint(m_ratio))
+
+print('H2O:', h_i, o_i)
+
+# %%
+xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_i} O{o_i}', ihx_d_s2)
+iohexol_mu = xraydb.material_mu('iohexol', en_keV*1000) / 10
+plt.plot(en_keV, iohexol_mu)
+plt.yscale('log')
+plt.show()
+
+print(iohexol_mu[371])
+
+# %%
+with open('Mo_spec_mono_45.npy', 'rb') as f:
+    spec_mono = np.load(f)
+
+plt.plot(en_keV, spec_mono)
+
+# %%
+input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/82fc7477-dafb-4950-aea5-6e522910181d.npy'
+with open(input_path, 'rb') as f:
+  im = np.load(f)
+
+print('im', im.shape)
+
+im = im[40:1260, 40:1260]
+
+print('im', im.shape)
+
+plt.imshow(im)
+plt.colorbar()
+plt.show()
+
+plot_row = im.shape[0] // 2
+
+plt.plot(im[plot_row])
+plt.plot(sp.ndimage.gaussian_filter(im[plot_row], sigma=5))
+plt.show()
+
+print(np.mean(im[plot_row, 200:1000]))
+
+# %%
+bim = gaussian(im, sigma=3) > 0.1
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow(im)
+ax[1].imshow(bim)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+calc_object_mus_from_spectrum(bim, gaussian(im), np.array([1]), np.array([17480]), 0.6560*10, voxel_size)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+calc_object_mus_from_spectrum(bim, gaussian(im), spec_mono, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
+with open('Mo_spec_mono_45_0.npy', 'rb') as f:
+    spec_mono_0 = np.load(f)
+
+plt.plot(en_keV, spec_mono_0)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+calc_object_mus_from_spectrum(bim, gaussian(im), spec_mono_0, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
+plt.plot(en_keV, sf)
+plt.plot(en_keV, spectrum_filtered)
+plt.grid()
+plt.ylim([0, 0.1])
+plt.xlim([17, 20])
+# plt.yscale('log')
+
+# %%
+input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/cd130f11-38b7-4de8-ad96-85f30f8a6105.npy'
+with open(input_path, 'rb') as f:
+  im = np.load(f)
+
+print('im', im.shape)
+
+im = im[40:1260, 40:1260]
+
+print('im', im.shape)
+
+plt.imshow(im)
+plt.colorbar()
+plt.show()
+
+plot_row = im.shape[0] // 2
+
+plt.plot(im[plot_row])
+plt.plot(sp.ndimage.gaussian_filter(im[plot_row], sigma=5))
+plt.show()
+
+print(np.mean(im[plot_row, 200:1000]))
+
+# %%
+bim = gaussian(im, sigma=3) > 0.15
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow(im)
+ax[1].imshow(bim)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+calc_object_mus_from_spectrum(bim, gaussian(im), spectrum_filtered, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+# wo_GOS, w_GOS, diff_GOS = calc_object_mus_from_spectrum(bim, gaussian(im), spectrum_filtered, en_keV*1000, iohexol_mu*10, voxel_size)
+calc_object_mus_from_spectrum(bim, gaussian(im), sf, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
+ihx_d = 2.2 #g/cm3
+wat_d = 0.997
+ihx_w = 0.647 #g
+ihx_d_s1 = ihx_w + wat_d * (1 - ihx_w/ihx_d)
+print(ihx_d_s1)
+
+ihx_p = 1
+wat_p = 3
+ihx_d_s2 = (ihx_d_s1 * ihx_p + wat_d * wat_p) / (ihx_p + wat_p)
+
+print('solution density:', ihx_d_s2)
+
+ihx_mm = 821.144 #g/mol
+wat_mm = 18.01528
+
+ihx_m = ihx_w * ihx_p / ihx_mm # mol
+wat_m = (wat_d * (1 - ihx_w/ihx_d) * ihx_p + wat_d * wat_p) / wat_mm
+print(ihx_m)
+print(wat_m)
+
+m_ratio = wat_m / ihx_m
+print(m_ratio)
+h_i = int(np.rint(m_ratio * 2))
+o_i = int(np.rint(m_ratio))
+
+print('H2O:', h_i, o_i)
+
+# %%
+xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_i} O{o_i}', ihx_d_s2)
+iohexol_mu = xraydb.material_mu('iohexol', en_keV*1000) / 10
+plt.plot(en_keV, iohexol_mu)
+plt.yscale('log')
+plt.show()
+
+print(iohexol_mu[371])
+
+# %%
+input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/f244cee7-79da-4190-8442-560e3f3a4622.npy'
+with open(input_path, 'rb') as f:
+  im = np.load(f)
+
+print('im', im.shape)
+
+im = im[40:1260, 40:1260]
+
+print('im', im.shape)
+
+plt.imshow(im)
+plt.colorbar()
+plt.show()
+
+plot_row = im.shape[0] // 2
+
+plt.plot(im[plot_row])
+plt.plot(sp.ndimage.gaussian_filter(im[plot_row], sigma=5))
+plt.show()
+
+print(np.mean(im[plot_row, 200:1000]))
+
+# %%
+bim = gaussian(im, sigma=3) > 0.2
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow(im)
+ax[1].imshow(bim)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+calc_object_mus_from_spectrum(bim, gaussian(im), spectrum_filtered, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+calc_object_mus_from_spectrum(bim, gaussian(im), sf, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
+input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/246198bb-212e-43a1-92b2-30bc2c46a351.npy'
+with open(input_path, 'rb') as f:
+  im = np.load(f)
+
+print('im', im.shape)
+
+im = im[40:1260, 40:1260]
+
+print('im', im.shape)
+
+plt.imshow(im)
+plt.colorbar()
+plt.show()
+
+plot_row = im.shape[0] // 2
+
+plt.plot(im[plot_row])
+plt.plot(sp.ndimage.gaussian_filter(im[plot_row], sigma=5))
+plt.show()
+
+print(np.mean(im[plot_row, 200:1000]))
+
+# %%
+bim = gaussian(im, sigma=3) > 0.2
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow(im)
+ax[1].imshow(bim)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+calc_object_mus_from_spectrum(bim, gaussian(im), np.array([1]), np.array([17480]), 0.38438*10, voxel_size)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+calc_object_mus_from_spectrum(bim, gaussian(im), spec_mono, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+calc_object_mus_from_spectrum(bim, gaussian(im), spec_mono_0, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
+with open('Mo_spec_mono_45_2.npy', 'rb') as f:
+    spec_mono_2 = np.load(f)
+
+plt.plot(en_keV, spec_mono_2)
+
+# %%
+voxel_size = 0.0009 # in cm — 0.001 = 10µm
+
+calc_object_mus_from_spectrum(bim, gaussian(im), spec_mono_2, en_keV*1000, iohexol_mu*10, voxel_size)
 
 # %%
