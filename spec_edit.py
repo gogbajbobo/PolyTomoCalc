@@ -181,3 +181,48 @@ plt.grid()
 plt.legend()
 
 # %%
+en_idx_min = 340
+en_idx_max = 393
+spm1 = np.copy(spectrum_mono_1)
+spm1[:en_idx_min] = 0
+spm1[en_idx_max:] = 0
+
+print(en_step * (en_idx_max - en_idx_min))
+print(en_step * ((en_idx_max-19) - (en_idx_min+27)))
+
+en_slice = slice(en_idx_min+27, en_idx_max-19)
+
+# plt.plot(en_keV[en_slice], spm1[en_slice], label='45keV')
+plt.plot(en_keV, spm1, label='45keV')
+# plt.yscale('log')
+plt.grid()
+plt.legend()
+
+# %%
+np.save('Mo_spec_mono_45', spm1)
+
+# %%
+np.save('Mo_spec_mono_45_0', spectrum_mono_1)
+
+# %%
+en_idx_min = 275
+en_idx_max = 393
+spm2 = np.copy(spectrum_mono_1)
+spm2[:en_idx_min] = 0
+spm2[en_idx_max:] = 0
+
+print(en_step * (en_idx_max - en_idx_min))
+print(en_step * ((en_idx_max-19) - (en_idx_min+27)))
+
+en_slice = slice(en_idx_min+27, en_idx_max-19)
+
+# plt.plot(en_keV[en_slice], spm1[en_slice], label='45keV')
+plt.plot(en_keV, spm2, label='45keV')
+plt.yscale('log')
+plt.grid()
+plt.legend()
+
+# %%
+np.save('Mo_spec_mono_45_2', spm2)
+
+# %%
