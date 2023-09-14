@@ -1,5 +1,6 @@
 jupyterlab
 jupytext
+jupyterlab-execute-time
 numpy
 scikit-image
 matplotlib
