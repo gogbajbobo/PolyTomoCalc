@@ -24,7 +24,7 @@ from skimage.filters import threshold_otsu, gaussian, median
 from skimage.transform import rotate, iradon, iradon_sart
 
 # %%
-spectrum1 = pd.read_csv('/Users/grimax/Desktop/tmp/SiC_samples/Mo_source_spectra.csv', sep=';', decimal=',')
+spectrum1 = pd.read_csv('/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/SiC_Mo_source_spectra/Mo_source_spectra.csv', sep=';', decimal=',')
 # spectrum1 = spectrum1[27:896].reset_index().drop(labels=['index', 'Unnamed: 0'], axis=1)
 spectrum1 = spectrum1.reset_index().drop(labels=['index', 'Unnamed: 0'], axis=1)
 
@@ -94,5 +94,38 @@ plt.yscale('log')
 
 # %%
 np.save('Mo_spec_poly_50', spec_nf_corrected_1)
+
+# %%
+thresh = 205
+spectrum1[thresh:].plot('keV', ['1,8_gauss'], logy=True)
+spectrum1[:thresh].plot('keV', ['1,8_gauss'], logy=False)
+
+# %%
+spec_nf_corrected_18 = spectrum1['1,8_gauss'].to_numpy()
+spec_nf_corrected_18[:thresh] = 0
+spec_nf_corrected_18[900:] = 0
+plt.plot(spectrum1['keV'], spec_nf_corrected_18)
+plt.yscale('log')
+
+# %%
+np.save('Mo_spec_poly_50_18', spec_nf_corrected_18)
+
+# %%
+thresh = 250
+spectrum1[thresh:].plot('keV', ['3,24_gauss'], logy=True)
+spectrum1[:thresh].plot('keV', ['3,24_gauss'], logy=False)
+
+# %%
+spec_nf_corrected_324 = spectrum1['3,24_gauss'].to_numpy()
+spec_nf_corrected_324[:thresh] = 0
+spec_nf_corrected_324[900:] = 0
+plt.plot(spectrum1['keV'], spec_nf_corrected_324)
+plt.yscale('log')
+
+# %%
+np.save('Mo_spec_poly_50_324', spec_nf_corrected_324)
+
+# %%
+np.save('Mo_spec_poly_50_energies', spectrum1['keV'].to_numpy())
 
 # %%
