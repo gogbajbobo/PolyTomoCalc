@@ -232,6 +232,10 @@ plt.grid()
 plt.show()
 
 # %%
+poly_mu_SiC = (att_SiC * spec_Mo_50_0).sum()
+poly_mu_SiC
+
+# %%
 exp_mu_depth = np.exp(np.outer(-att_SiC, [0, 0.1, 0.3, 1.0])).T
 
 plt.plot(exp_mu_depth.T)
@@ -248,8 +252,8 @@ plt.grid()
 plt.show()
 
 # %%
-voxel_size = 0.0009 # in cm — 0.001 = 10µm
-total_lenght = 1 # cm
+voxel_size = 0.009 # in mm — 0.01 = 10µm
+total_lenght = 10 # 1cm
 length_ticks = np.arange(0, total_lenght, voxel_size)
 
 exp_mu_depth = np.exp(np.outer(-att_SiC, length_ticks)).T
