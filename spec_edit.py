@@ -38,7 +38,7 @@ def extract_data(file_name):
 
 
 # %%
-spectrum = extract_data('/Users/grimax/Desktop/tmp/Iohexol_samples/20230829 -- Mo-tube-poly-45kV .mca')
+spectrum = extract_data('/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/20230829 -- Mo-tube-poly-45kV .mca')
 plt.plot(spectrum)
 plt.yscale('log')
 plt.grid()
@@ -153,7 +153,7 @@ plt.grid()
 plt.yscale('log')
 
 # %%
-np.save('spectrum_edited', sf_edit)
+np.save('Mo_spec_poly_45', sf_edit)
 
 # %%
 
