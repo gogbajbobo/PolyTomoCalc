@@ -42,7 +42,7 @@ def extract_data(file_name):
 
 
 # %% colab={"base_uri": "https://localhost:8080/"} id="_A8FQwxNkhg8" outputId="4188dbc1-2d82-488e-ede8-32ae8348348c"
-spectrum = extract_data('/Users/grimax/Desktop/tmp/Iohexol_samples/20230829 -- Mo-tube-poly-45kV .mca')
+spectrum = extract_data('/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/20230829 -- Mo-tube-poly-45kV .mca')
 spectrum
 
 # %% colab={"base_uri": "https://localhost:8080/", "height": 430} id="NjXlyrXB3MPF" outputId="6f8409ee-9693-409a-9532-4ad2d7d7db43"
@@ -99,7 +99,7 @@ print(iohexol_mu[371])
 
 # %% colab={"base_uri": "https://localhost:8080/", "height": 899} id="fJPXFdu3lOHN" outputId="c54a9ca9-da5b-4929-a4ee-f502a179e714"
 # input_path = '/content/drive/MyDrive/Colab Data/Iohexol_samples/e82c1068-5c0f-40c3-9dba-4e811b566344.npy'
-input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/dbace4ca-3ba6-4a8a-b191-d52fe70c8a4f.npy'
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/dbace4ca-3ba6-4a8a-b191-d52fe70c8a4f.npy'
 with open(input_path, 'rb') as f:
   im = np.load(f)
 
