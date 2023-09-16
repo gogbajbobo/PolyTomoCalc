@@ -28,6 +28,11 @@ from spec_gen import generate_spectrum
 import spekpy
 
 
+# %% [markdown]
+# ## **Spectram tomography results**
+#
+# Alpha, beta, poly slices
+
 # %% editable=true slideshow={"slide_type": ""}
 v_index = '048'
 
@@ -119,6 +124,11 @@ ax[2].set_ylim(0, 0.45)
 ax[2].set_title('Poly', fontsize=18)
 plt.show()
 
+# %% [markdown]
+# ## **SiC samples**
+#
+# No filter, Al-filter 1.8mm, Al-filter 3.24mm
+
 # %%
 input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/uvarov_samples/a99114d8-4d13-4350-9886-a437aa7bf22e_bh_corr_2.57_optimal.npy'
 with open(input_path, 'rb') as f:
@@ -182,6 +192,11 @@ im_SiC_324 = process_porous_pic(im_SiC_324, bim_SiC)
 
 show_porous_pic_with_profile(im_SiC_324, h_line_SiC)
 
+# %% [markdown]
+# ## **Source spectrums** (SiC samples)
+#
+# Mo-anode 50keV no filter, 1.8mm and 3.24mm Al-filter
+
 # %%
 # Mo_spec_*.npy should be created in spectrum_analysis.ipynb first
 
@@ -217,6 +232,9 @@ plt.yscale('log')
 plt.grid()
 plt.legend()
 plt.show()
+
+# %% [markdown]
+# ## **SiC attenuation**
 
 # %%
 xraydb.add_material('SiC','SiC', 3.21)
@@ -288,6 +306,9 @@ for y, bim in enumerate(bim_SiC):
 plt.imshow(out_im)
 plt.colorbar()
 
+# %% [markdown]
+# ## **Naive reconstruction**
+
 # %%
 att_obj_sum = np.zeros(bim_SiC.shape)
 
@@ -328,6 +349,9 @@ def show_porous_profiles(images, h_profile_line):
 
 show_porous_profiles([im_SiC_0, att_obj_sum], h_line_SiC)
 
+# %% [markdown]
+# ## **µ-filled reconstruction**
+
 # %%
 angles = np.arange(0, 180, 1)
 sinogram = np.zeros((angles.size, bim_SiC.shape[0]))
@@ -366,6 +390,9 @@ plt.show()
 # %%
 show_porous_profiles([im_SiC_0, recon], h_line_SiC)
 
+# %% [markdown]
+# ## **Gadolinium oxysulfide**
+
 # %%
 xraydb.add_material('GOS', 'Gd2O2S', 7.34)
 GOS_mus = xraydb.material_mu('GOS', spec_Mo_50_energies * 1000) / 10
@@ -396,8 +423,11 @@ plt.grid()
 plt.show()
 
 
+# %% [markdown]
+# ## **Reconstruction with spectrum attenuation calculation and GOS**
+
 # %%
-def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, energies, mat_att, voxel_size, GOS_eff, h_line):
+def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, mat_att, voxel_size, GOS_eff, h_line=None):
 
     angles = np.arange(0, 180, 1)
     sino_shape = (angles.size, bin_im.shape[0])
@@ -459,6 +489,161 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, energies, mat_att, v
 
 
 # %%
-_ = calc_object_mus_from_spectrum(bim_SiC, im_SiC_0, spec_Mo_50_0, spec_Mo_50_energies, att_SiC, voxel_size, GOS_eff, h_line_SiC)
+_ = calc_object_mus_from_spectrum(bim_SiC, im_SiC_0, spec_Mo_50_0, att_SiC, voxel_size, GOS_eff, h_line_SiC)
+
+# %% [markdown]
+# ## **Iohexol samles**
+#
+# Mo-anode 45keV spectrum
+
+# %%
+input_path = 'Mo_spec_poly_45.npy'
+with open(input_path, 'rb') as f:
+    spec_Mo_45 = np.load(f).astype(float)
+    spec_Mo_45 /= spec_Mo_50_324.sum()
+
+en_step = (19.608 - 17.479) / (416 - 371)
+spec_Mo_45_energies = np.array([17.479 + (i - 371) * en_step for i in np.arange(spec_Mo_45.shape[0])])
+
+plt.plot(spec_Mo_45_energies, spec_Mo_45)
+plt.yscale('log')
+plt.grid()
+plt.show()
+
+
+# %% [markdown]
+# ## **Calc Iohexol water solution density**
+
+# %%
+def calc_Ihx_solution(ihx_parts=1, wat_parts=1):
+
+    # ihx_parts = 5 #4.17
+    # wat_parts = 60
+    
+    ihx_density = 2.2 #g/cm3 — Iohexol
+    wat_density = 0.997 # — Water
+    ihx_weight = 0.647 #g — Ihx in 1ml of water (fabric solution)
+    ihx_density_solution_1 = ihx_weight + wat_density * (1 - ihx_weight/ihx_density)
+    print('factory solution density:', ihx_density_solution_1)
+    
+    ihx_density_solution_2 = (ihx_density_solution_1 * ihx_parts + wat_density * wat_parts) / (ihx_parts + wat_parts)
+    
+    print('solution density:', ihx_density_solution_2)
+    
+    ihx_molar_mass = 821.144 #g/mol
+    wat_molar_mass = 18.01528
+    
+    ihx_mol = ihx_weight * ihx_parts / ihx_molar_mass # mol
+    wat_mol = (wat_density * (1 - ihx_weight/ihx_density) * ihx_parts + wat_density * wat_parts) / wat_molar_mass
+    # print(ihx_mol)
+    # print(wat_mol)
+    
+    mol_ratio = wat_mol / ihx_mol
+    # print(mol_ratio)
+    hydrogen_coeff = int(np.rint(mol_ratio * 2))
+    oxygen_coeff = int(np.rint(mol_ratio))
+    
+    print('H2O:', hydrogen_coeff, oxygen_coeff)
+
+    return hydrogen_coeff, oxygen_coeff, ihx_density_solution_2
+
+
+
+# %%
+h_c, o_c, d = calc_Ihx_solution(5, 60) #4.17:60
+
+xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_c} O{o_c}', d)
+iohexol_mu = xraydb.material_mu('iohexol', spec_Mo_45_energies*1000) / 10
+plt.plot(spec_Mo_45_energies, iohexol_mu)
+plt.yscale('log')
+plt.show()
+
+print(iohexol_mu[371])
+
+# %% [markdown]
+# ## **GOS eff for Ihx**
+
+# %%
+GOS_mus_45 = xraydb.material_mu('GOS', spec_Mo_45_energies * 1000) / 10
+GOS_t_45 = np.exp(-GOS_mus_45 * 22 * 0.001) # (22 * 0.001)mm == 22µm
+
+qe = 60 # photon/keV
+
+GOS_n_p_45 = spec_Mo_45_energies * qe
+# GOS_n_p_45 = np.ones(spec_Mo_45_energies.size)
+
+GOS_eff_45 = GOS_n_p_45 * (1 - GOS_t_45)
+
+plt.plot(spec_Mo_45_energies, GOS_eff_45)
+plt.grid()
+plt.show()
+
+# %% [markdown]
+# ## **Ihx samples**
+
+# %%
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/dbace4ca-3ba6-4a8a-b191-d52fe70c8a4f.npy'
+with open(input_path, 'rb') as f:
+  im_ihx_1_12 = np.load(f)
+
+# print('im_ihx_1_12', im_ihx_1_12.shape)
+
+im_ihx_1_12 = im_ihx_1_12[40:1260, 40:1260]
+im_ihx_1_12[im_ihx_1_12 < 0] = 0
+
+# print('im_ihx_1_12', im_ihx_1_12.shape)
+
+plt.imshow(im_ihx_1_12)
+plt.colorbar()
+plt.show()
+
+plt.plot(im_ihx_1_12[650])
+plt.plot(sp.ndimage.gaussian_filter(im_ihx_1_12[650], sigma=2))
+plt.show()
+
+print(np.mean(im_ihx_1_12[650, 200:1000]))
+
+# %%
+bim_ihx_1_12 = (gaussian(im_ihx_1_12, sigma=3) > 0.1).astype(int)
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow(gaussian(im_ihx_1_12))
+ax[1].imshow(bim_ihx_1_12)
+plt.show()
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spec_Mo_45, iohexol_mu, voxel_size, GOS_eff_45)
+
+# %%
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/e82c1068-5c0f-40c3-9dba-4e811b566344.npy'
+with open(input_path, 'rb') as f:
+  im_ihx_1_12_mono = np.load(f)
+
+# print('im_ihx_1_12_mono', im_ihx_1_12_mono.shape)
+
+im_ihx_1_12_mono = im_ihx_1_12_mono[40:1260, 40:1260]
+im_ihx_1_12_mono[im_ihx_1_12_mono < 0] = 0
+
+# print('im_ihx_1_12_mono', im_ihx_1_12_mono.shape)
+
+plt.imshow(im_ihx_1_12_mono)
+plt.colorbar()
+plt.show()
+
+plt.plot(im_ihx_1_12_mono[650])
+plt.plot(sp.ndimage.gaussian_filter(im_ihx_1_12_mono[650], sigma=2))
+plt.show()
+
+print(np.mean(im_ihx_1_12_mono[650, 200:1000]))
+
+# %%
+bim_ihx_1_12_mono = (gaussian(im_ihx_1_12_mono, sigma=3) > 0.1).astype(int)
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow(gaussian(im_ihx_1_12_mono))
+ax[1].imshow(bim_ihx_1_12_mono)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_12_mono, gaussian(im_ihx_1_12_mono), np.array([1]), 0.1956, voxel_size, np.array([1]))
 
 # %%
