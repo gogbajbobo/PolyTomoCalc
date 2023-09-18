@@ -497,13 +497,19 @@ _ = calc_object_mus_from_spectrum(bim_SiC, im_SiC_0, spec_Mo_50_0, att_SiC, voxe
 # Mo-anode 45keV spectrum
 
 # %%
+# see spec_edit.ipynb to load, handle and save spectrum
+
 input_path = 'Mo_spec_poly_45.npy'
 with open(input_path, 'rb') as f:
     spec_Mo_45 = np.load(f).astype(float)
-    spec_Mo_45 /= spec_Mo_50_324.sum()
+    # spec_Mo_45 /= spec_Mo_45.sum()
 
-en_step = (19.608 - 17.479) / (416 - 371)
-spec_Mo_45_energies = np.array([17.479 + (i - 371) * en_step for i in np.arange(spec_Mo_45.shape[0])])
+input_path = 'Mo_spec_poly_45_energies.npy'
+with open(input_path, 'rb') as f:
+    spec_Mo_45_energies = np.load(f).astype(float)
+
+# en_step = (19.608 - 17.479) / (416 - 371)
+# spec_Mo_45_energies = np.array([17.479 + (i - 371) * en_step for i in np.arange(spec_Mo_45.shape[0])])
 
 plt.plot(spec_Mo_45_energies, spec_Mo_45)
 plt.yscale('log')
@@ -581,6 +587,9 @@ plt.show()
 # %% [markdown]
 # ## **Ihx samples**
 
+# %% [markdown]
+# ## Water/Iohexol 1/12
+
 # %%
 input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/dbace4ca-3ba6-4a8a-b191-d52fe70c8a4f.npy'
 with open(input_path, 'rb') as f:
@@ -645,5 +654,215 @@ ax[1].imshow(bim_ihx_1_12_mono)
 
 # %%
 _ = calc_object_mus_from_spectrum(bim_ihx_1_12_mono, gaussian(im_ihx_1_12_mono), np.array([1]), 0.1956, voxel_size, np.array([1]))
+
+# %% [markdown]
+# ## Water/Iohexol 1/1
+
+# %%
+h_c, o_c, d = calc_Ihx_solution(1, 1)
+
+xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_c} O{o_c}', d)
+iohexol_mu = xraydb.material_mu('iohexol', spec_Mo_45_energies*1000) / 10
+plt.plot(spec_Mo_45_energies, iohexol_mu)
+plt.yscale('log')
+plt.show()
+
+print(iohexol_mu[371])
+
+# %%
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/cd130f11-38b7-4de8-ad96-85f30f8a6105.npy'
+with open(input_path, 'rb') as f:
+  im_ihx_1_1 = np.load(f)
+
+# print('im_ihx_1_1', im_ihx_1_1.shape)
+
+im_ihx_1_1 = im_ihx_1_1[40:1260, 40:1260]
+im_ihx_1_1[im_ihx_1_1 < 0] = 0
+
+# print('im_ihx_1_1', im_ihx_1_1.shape)
+
+plt.imshow(im_ihx_1_1)
+plt.colorbar()
+plt.show()
+
+plt.plot(im_ihx_1_1[650])
+plt.plot(sp.ndimage.gaussian_filter(im_ihx_1_1[650], sigma=2))
+plt.show()
+
+print(np.mean(im_ihx_1_1[650, 200:1000]))
+
+# %%
+bim_ihx_1_1 = (gaussian(im_ihx_1_1, sigma=3) > 0.15).astype(int)
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow(gaussian(im_ihx_1_1))
+ax[1].imshow(bim_ihx_1_1)
+plt.show()
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), spec_Mo_45, iohexol_mu, voxel_size, GOS_eff_45)
+
+# %%
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/82fc7477-dafb-4950-aea5-6e522910181d.npy'
+with open(input_path, 'rb') as f:
+  im_ihx_1_1_mono = np.load(f)
+
+# print('im_ihx_1_1_mono', im_ihx_1_1_mono.shape)
+
+im_ihx_1_1_mono = im_ihx_1_1_mono[40:1260, 40:1260]
+im_ihx_1_1_mono[im_ihx_1_1_mono < 0] = 0
+
+# print('im_ihx_1_1_mono', im_ihx_1_1_mono.shape)
+
+plt.imshow(im_ihx_1_1_mono)
+plt.colorbar()
+plt.show()
+
+plt.plot(im_ihx_1_1_mono[650])
+plt.plot(sp.ndimage.gaussian_filter(im_ihx_1_1_mono[650], sigma=2))
+plt.show()
+
+print(np.mean(im_ihx_1_1_mono[650, 200:1000]))
+
+# %%
+bim_ihx_1_1_mono = (gaussian(im_ihx_1_1_mono, sigma=3) > 0.15).astype(int)
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow(gaussian(im_ihx_1_1_mono))
+ax[1].imshow(bim_ihx_1_1_mono)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_1_mono, gaussian(im_ihx_1_1_mono), np.array([1]), 0.656038, voxel_size, np.array([1]))
+
+# %% [markdown]
+# ## **generate SpekPy spectrum**
+
+# %%
+s = spekpy.Spek(kvp=45, dk=en_step, targ='Mo')
+s.filter('Air', 1440)
+energies, intensities = s.get_spectrum()
+intensities /= intensities.sum()
+
+plt.plot(energies, intensities)
+plt.plot(spec_Mo_45_energies, spec_Mo_45)
+plt.ylim([2e-5, 4e-1])
+plt.yscale('log')
+plt.grid()
+
+# %%
+idx_min = np.where(spec_Mo_45_energies < energies[0])[0][-1]
+idx_max = np.where(spec_Mo_45_energies > energies[-1])[0][0]
+spec_Mo_45_energies_1 = spec_Mo_45_energies[idx_min:idx_max]
+spec_Mo_45_1 = spec_Mo_45[idx_min:idx_max]
+spec_Mo_45_1 /= spec_Mo_45_1.sum()
+
+# %%
+plt.plot(energies, intensities)
+plt.plot(spec_Mo_45_energies_1, spec_Mo_45_1)
+plt.ylim([2e-5, 4e-1])
+plt.yscale('log')
+plt.grid()
+
+# %%
+spekpy_Mo_45_energies = np.copy(energies)
+spekpy_Mo_45 = np.copy(intensities)
+
+# %% [markdown]
+# ## **GOS efficiensy**
+
+# %%
+GOS_mus_45 = xraydb.material_mu('GOS', spekpy_Mo_45_energies * 1000) / 10
+GOS_t_45 = np.exp(-GOS_mus_45 * 22 * 0.001) # (22 * 0.001)mm == 22µm
+
+qe = 60 # photon/keV
+
+GOS_n_p_45 = spekpy_Mo_45_energies * qe
+# GOS_n_p_45 = np.ones(spekpy_Mo_45_energies.size)
+
+GOS_eff_45 = GOS_n_p_45 * (1 - GOS_t_45)
+
+plt.plot(spekpy_Mo_45_energies, GOS_eff_45)
+plt.grid()
+plt.show()
+
+# %%
+h_c, o_c, d = calc_Ihx_solution(5, 60) #4.17:60
+
+xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_c} O{o_c}', d)
+iohexol_1_12_mu = xraydb.material_mu('iohexol', spekpy_Mo_45_energies*1000) / 10
+plt.plot(spekpy_Mo_45_energies, iohexol_1_12_mu)
+plt.yscale('log')
+plt.show()
+
+spekpy_MoKa_idx = 348 # 348 — index for 17.479 keV
+iohexol_MoKa_mu = iohexol_1_12_mu[spekpy_MoKa_idx]
+print(iohexol_MoKa_mu)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spekpy_Mo_45, iohexol_1_12_mu, voxel_size, GOS_eff_45)
+
+# %%
+h_c, o_c, d = calc_Ihx_solution(1, 1)
+
+xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_c} O{o_c}', d)
+iohexol_1_1_mu = xraydb.material_mu('iohexol', spekpy_Mo_45_energies*1000) / 10
+plt.plot(spekpy_Mo_45_energies, iohexol_1_1_mu)
+plt.yscale('log')
+plt.show()
+
+spekpy_MoKa_idx = 348 # 348 — index for 17.479 keV
+iohexol_MoKa_mu = iohexol_1_1_mu[spekpy_MoKa_idx]
+print(iohexol_MoKa_mu)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), spekpy_Mo_45, iohexol_1_1_mu, voxel_size, GOS_eff_45)
+
+# %% [markdown]
+# ## **Generate SpekPy w/o bremsstrahlung**
+
+# %%
+s = spekpy.Spek(kvp=45, dk=en_step, targ='Mo', brem=False)
+s.filter('Air', 1440)
+energies, intensities = s.get_spectrum()
+intensities /= intensities.sum()
+
+plt.plot(energies, intensities)
+# plt.plot(spec_Mo_45_energies, spec_Mo_45)
+plt.ylim([2e-5, 4e-1])
+plt.yscale('log')
+plt.grid()
+
+spekpy_Mo_45_wo_brem_energies = np.copy(energies)
+spekpy_Mo_45_wo_brem = np.copy(intensities)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spekpy_Mo_45_wo_brem, iohexol_1_12_mu, voxel_size, GOS_eff_45)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), spekpy_Mo_45_wo_brem, iohexol_1_1_mu, voxel_size, GOS_eff_45)
+
+# %% [markdown]
+# ## **Generate SpekPy w/o characteristic lines**
+
+# %%
+s = spekpy.Spek(kvp=45, dk=en_step, targ='Mo', char=False)
+s.filter('Air', 1440)
+energies, intensities = s.get_spectrum()
+intensities /= intensities.sum()
+
+plt.plot(energies, intensities)
+# plt.plot(spec_Mo_45_energies, spec_Mo_45)
+plt.ylim([2e-5, 4e-1])
+plt.yscale('log')
+plt.grid()
+
+spekpy_Mo_45_wo_char_energies = np.copy(energies)
+spekpy_Mo_45_wo_char = np.copy(intensities)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spekpy_Mo_45_wo_char, iohexol_1_12_mu, voxel_size, GOS_eff_45)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), spekpy_Mo_45_wo_char, iohexol_1_1_mu, voxel_size, GOS_eff_45)
 
 # %%
