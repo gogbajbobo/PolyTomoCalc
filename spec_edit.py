@@ -148,12 +148,18 @@ plt.grid()
 plt.yscale('log')
 
 # %%
+en_keV = en_keV[2:] # rm less than zero energies
+sf_edit = sf_edit[2:]
+
+sf_edit /= sf_edit.sum()
+
 plt.plot(en_keV, sf_edit)
 plt.grid()
 plt.yscale('log')
 
 # %%
 np.save('Mo_spec_poly_45', sf_edit)
+np.save('Mo_spec_poly_45_energies', en_keV)
 
 # %%
 
