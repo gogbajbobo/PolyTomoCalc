@@ -24,7 +24,6 @@ from skimage.filters import threshold_otsu, gaussian, median
 from skimage.transform import rotate, iradon, iradon_sart
 from skimage.io import imread
 
-from spec_gen import generate_spectrum
 import spekpy
 
 
@@ -490,6 +489,9 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, mat_att, voxel_size,
 
 # %%
 _ = calc_object_mus_from_spectrum(bim_SiC, im_SiC_0, spec_Mo_50_0, att_SiC, voxel_size, GOS_eff, h_line_SiC)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_SiC, im_SiC_0, spec_Mo_50_0, att_SiC, voxel_size, (1 - GOS_t), h_line_SiC)
 
 # %% [markdown]
 # ## **Iohexol samles**
