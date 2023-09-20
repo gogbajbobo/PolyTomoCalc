@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 
 from skimage.filters import threshold_otsu, gaussian, median
 from skimage.transform import rotate, iradon, iradon_sart
-from spec_gen import generate_spectrum
+from _handler_funcs import generate_spectrum
 
 
 # %% id="LhzCFhee27MO"

@@ -53,3 +53,19 @@ def generate_spectrum(i, u, M_a, num_points=100, energies=None):
             spectrum += intensity * (w2 / 2) ** 2 / ((12.398 / energies - 12.398 / energy) ** 2 + (w1 / 2) ** 2)
 
     return energies, spectrum
+
+
+def extract_spectrum_data(file_name):
+    res = []
+    with open(file_name,'rb') as f:
+        find_data = False
+        for l in f.readlines():
+            s = l.decode('ascii').replace('\r\n','')
+            if s == '<<END>>'  and find_data:
+                break
+            if find_data:
+                res.append(s)
+            if s == '<<DATA>>':
+                find_data =True
+
+        return np.array(res).astype(int)

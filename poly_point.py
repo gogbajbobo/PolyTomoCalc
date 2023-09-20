@@ -221,7 +221,7 @@ def point_sum_calc(spectrum_filtered):
 point_sum_calc(spectrum_filtered)
 
 # %%
-from spec_gen import generate_spectrum
+from _handler_funcs import generate_spectrum
 
 # %%
 _, s = generate_spectrum(40, 45, 'Mo', energies=en_keV)

@@ -18,7 +18,7 @@ import spekpy
 import matplotlib.pyplot as plt
 import numpy as np
 import xraydb
-from spec_gen import generate_spectrum
+from _handler_funcs import generate_spectrum
 
 # %%
 en_step = (19.608 - 17.479) / (416 - 371)
