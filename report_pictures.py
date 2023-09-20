@@ -624,6 +624,9 @@ plt.show()
 _ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spec_Mo_45, iohexol_mu, voxel_size, GOS_eff_45)
 
 # %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spec_Mo_45, iohexol_mu, voxel_size, (1 - GOS_t_45))
+
+# %%
 input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/e82c1068-5c0f-40c3-9dba-4e811b566344.npy'
 with open(input_path, 'rb') as f:
   im_ihx_1_12_mono = np.load(f)
@@ -701,6 +704,9 @@ plt.show()
 
 # %%
 _ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), spec_Mo_45, iohexol_mu, voxel_size, GOS_eff_45)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), spec_Mo_45, iohexol_mu, voxel_size, (1 - GOS_t_45))
 
 # %%
 input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/82fc7477-dafb-4950-aea5-6e522910181d.npy'
