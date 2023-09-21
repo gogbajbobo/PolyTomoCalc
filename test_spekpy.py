@@ -91,3 +91,6 @@ plt.yscale('log')
 plt.grid()
 
 # %%
+whos
+
+# %%
