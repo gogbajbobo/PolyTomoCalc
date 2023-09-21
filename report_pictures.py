@@ -746,6 +746,9 @@ _ = calc_object_mus_from_spectrum(bim_ihx_1_1_mono, gaussian(im_ihx_1_1_mono), n
 # ## **generate SpekPy spectrum**
 
 # %%
+en_step = np.mean(spec_Mo_45_energies[1:] - spec_Mo_45_energies[:-1])
+
+# %%
 s = spekpy.Spek(kvp=45, dk=en_step, targ='Mo')
 s.filter('Air', 1440)
 energies, intensities = s.get_spectrum()
@@ -872,5 +875,8 @@ _ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spekpy_Mo
 
 # %%
 _ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), spekpy_Mo_45_wo_char, iohexol_1_1_mu, voxel_size, GOS_eff_45)
+
+# %%
+whos
 
 # %%
