@@ -48,6 +48,42 @@ spec_df['nf_gauss_20'] /= spec_df['nf_gauss_20'].sum()
 spec_df
 
 # %%
+spec_df.plot('keV', ['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15'], logy=True)
+
+# %%
 spec_df[150:250].plot('keV', ['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15'], logy=True)
+
+# %%
+spec_df[150:250].plot('keV', ['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15'], grid=True)
+
+# %%
+spec_df[180:184].plot('keV', ['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15'], grid=True)
+
+# %%
+spec_df[180:184][['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15']]
+
+# %%
+spec_df[180:184][['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15']].max()
+
+# %%
+spec_df[210:215].plot('keV', ['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15'], grid=True)
+
+# %%
+spec_df[210:215][['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15']]
+
+# %%
+spec_df[210:215][['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15']].max()
+
+# %%
+spec_df[180:184][['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15']].max()
+
+# %%
+0.047504/0.009284
+
+# %%
+0.036493/0.007822
+
+# %%
+0.027468/0.006289
 
 # %%
