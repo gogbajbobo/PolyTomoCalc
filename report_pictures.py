@@ -297,9 +297,10 @@ plt.grid()
 plt.show()
 
 # %%
-poly_mu_SiC = (att_SiC * effective_spec_Mo_50_0).sum()
-print((att_SiC * spec_Mo_50_0).sum())
+poly_mu_SiC = (att_SiC * spec_Mo_50_0).sum()
+poly_mu_SiC_effective = (att_SiC * effective_spec_Mo_50_0).sum()
 print(poly_mu_SiC)
+print(poly_mu_SiC_effective)
 
 # %%
 transmissions_at_depths = np.exp(np.outer(-att_SiC, [0, 0.1, 0.3, 1.0, 3.0, 10.0])).T
@@ -335,38 +336,91 @@ total_lenght = 10 # 1cm
 length_ticks = np.arange(0, total_lenght, voxel_size)
 
 transmissions_SiC_at_depths = np.exp(np.outer(-att_SiC, length_ticks)).T
-passed_spectrums_50_0 = transmissions_SiC_at_depths * effective_spec_Mo_50_0
-passed_spectrums_50_18 = transmissions_SiC_at_depths * effective_spec_Mo_50_18
-passed_spectrums_50_324 = transmissions_SiC_at_depths * effective_spec_Mo_50_324
+
+passed_spectrums_50_0 = transmissions_SiC_at_depths * spec_Mo_50_0
+passed_spectrums_50_18 = transmissions_SiC_at_depths * spec_Mo_50_18
+passed_spectrums_50_324 = transmissions_SiC_at_depths * spec_Mo_50_324
+
+passed_spectrums_50_0_eff = transmissions_SiC_at_depths * effective_spec_Mo_50_0
+passed_spectrums_50_18_eff = transmissions_SiC_at_depths * effective_spec_Mo_50_18
+passed_spectrums_50_324_eff = transmissions_SiC_at_depths * effective_spec_Mo_50_324
 
 p_specs_norm_50_0 = (passed_spectrums_50_0.T / np.sum(passed_spectrums_50_0, axis=1)).T
 p_specs_norm_50_18 = (passed_spectrums_50_18.T / np.sum(passed_spectrums_50_18, axis=1)).T
 p_specs_norm_50_324 = (passed_spectrums_50_324.T / np.sum(passed_spectrums_50_324, axis=1)).T
 
-plt.plot(length_ticks, np.sum(passed_spectrums_50_0, axis=1))
-plt.plot(length_ticks, np.sum(p_specs_norm_50_0, axis=1))
-plt.plot(length_ticks, np.sum(passed_spectrums_50_18, axis=1))
-plt.plot(length_ticks, np.sum(p_specs_norm_50_18, axis=1))
-plt.plot(length_ticks, np.sum(passed_spectrums_50_324, axis=1))
-plt.plot(length_ticks, np.sum(p_specs_norm_50_324, axis=1))
+p_specs_norm_50_0_eff = (passed_spectrums_50_0_eff.T / np.sum(passed_spectrums_50_0_eff, axis=1)).T
+p_specs_norm_50_18_eff = (passed_spectrums_50_18_eff.T / np.sum(passed_spectrums_50_18_eff, axis=1)).T
+p_specs_norm_50_324_eff = (passed_spectrums_50_324_eff.T / np.sum(passed_spectrums_50_324_eff, axis=1)).T
+
+plt.plot(length_ticks, np.sum(passed_spectrums_50_0, axis=1), label='50_0')
+# plt.plot(length_ticks, np.sum(p_specs_norm_50_0, axis=1))
+plt.plot(length_ticks, np.sum(passed_spectrums_50_18, axis=1), label='50_18')
+# plt.plot(length_ticks, np.sum(p_specs_norm_50_18, axis=1))
+plt.plot(length_ticks, np.sum(passed_spectrums_50_324, axis=1), label='50_324')
+# plt.plot(length_ticks, np.sum(p_specs_norm_50_324, axis=1))
+
+plt.plot(length_ticks, np.sum(passed_spectrums_50_0_eff, axis=1), label='50_0_eff')
+# plt.plot(length_ticks, np.sum(p_specs_norm_50_0_eff, axis=1))
+plt.plot(length_ticks, np.sum(passed_spectrums_50_18_eff, axis=1), label='50_18_eff')
+# plt.plot(length_ticks, np.sum(p_specs_norm_50_18_eff, axis=1))
+plt.plot(length_ticks, np.sum(passed_spectrums_50_324_eff, axis=1), label='50_324_eff')
+# plt.plot(length_ticks, np.sum(p_specs_norm_50_324_eff, axis=1))
+
+plt.legend()
+plt.show()
 
 print(p_specs_norm_50_0.shape)
 
-# %%
-poly_SiC_mu_map_50_0 = p_specs_norm_50_0 * att_SiC
-poly_SiC_mu_at_depth_50_0 = np.sum(poly_SiC_mu_map_50_0, axis=1)
-poly_SiC_mu_map_50_18 = p_specs_norm_50_18 * att_SiC
-poly_SiC_mu_at_depth_50_18 = np.sum(poly_SiC_mu_map_50_18, axis=1)
-poly_SiC_mu_map_50_324 = p_specs_norm_50_324 * att_SiC
-poly_SiC_mu_at_depth_50_324 = np.sum(poly_SiC_mu_map_50_324, axis=1)
 
-print(poly_SiC_mu_map_50_0.shape)
+# %%
+def calc_mu_at_depths(spectrums):
+    spec_sums = np.sum(spectrums, axis=1)
+    mu_at_depths = -np.log(spec_sums[1:] / spec_sums[:-1]) / voxel_size
+    return mu_at_depths
+
+# %% jupyter={"source_hidden": true}
+### This is differential µ calculation, but we have to use effective µ (from 9µm length attenuation)
+
+# poly_SiC_mu_map_50_0 = p_specs_norm_50_0 * att_SiC
+# poly_SiC_mu_at_depth_50_0 = np.sum(poly_SiC_mu_map_50_0, axis=1)
+# poly_SiC_mu_map_50_18 = p_specs_norm_50_18 * att_SiC
+# poly_SiC_mu_at_depth_50_18 = np.sum(poly_SiC_mu_map_50_18, axis=1)
+# poly_SiC_mu_map_50_324 = p_specs_norm_50_324 * att_SiC
+# poly_SiC_mu_at_depth_50_324 = np.sum(poly_SiC_mu_map_50_324, axis=1)
+
+# poly_SiC_mu_map_50_0_eff = p_specs_norm_50_0_eff * att_SiC
+# poly_SiC_mu_at_depth_50_0_eff = np.sum(poly_SiC_mu_map_50_0_eff, axis=1)
+# poly_SiC_mu_map_50_18_eff = p_specs_norm_50_18_eff * att_SiC
+# poly_SiC_mu_at_depth_50_18_eff = np.sum(poly_SiC_mu_map_50_18_eff, axis=1)
+# poly_SiC_mu_map_50_324_eff = p_specs_norm_50_324_eff * att_SiC
+# poly_SiC_mu_at_depth_50_324_eff = np.sum(poly_SiC_mu_map_50_324_eff, axis=1)
+
+# print(poly_SiC_mu_map_50_0.shape)
+# print(poly_SiC_mu_at_depth_50_0.shape)
+
+
+# %%
+poly_SiC_mu_at_depth_50_0 = calc_mu_at_depths(passed_spectrums_50_0)
+poly_SiC_mu_at_depth_50_18 = calc_mu_at_depths(passed_spectrums_50_18)
+poly_SiC_mu_at_depth_50_324 = calc_mu_at_depths(passed_spectrums_50_324)
+
+poly_SiC_mu_at_depth_50_0_eff = calc_mu_at_depths(passed_spectrums_50_0_eff)
+poly_SiC_mu_at_depth_50_18_eff = calc_mu_at_depths(passed_spectrums_50_18_eff)
+poly_SiC_mu_at_depth_50_324_eff = calc_mu_at_depths(passed_spectrums_50_324_eff)
+
 print(poly_SiC_mu_at_depth_50_0.shape)
 
-plt.plot(length_ticks, poly_SiC_mu_at_depth_50_0)
-plt.plot(length_ticks, poly_SiC_mu_at_depth_50_18)
-plt.plot(length_ticks, poly_SiC_mu_at_depth_50_324)
+plt.plot(length_ticks[1:], poly_SiC_mu_at_depth_50_0, label='50_0')
+plt.plot(length_ticks[1:], poly_SiC_mu_at_depth_50_18, label='50_18')
+plt.plot(length_ticks[1:], poly_SiC_mu_at_depth_50_324, label='50_324')
+
+plt.plot(length_ticks[1:], poly_SiC_mu_at_depth_50_0_eff, label='50_0_eff')
+plt.plot(length_ticks[1:], poly_SiC_mu_at_depth_50_18_eff, label='50_18_eff')
+plt.plot(length_ticks[1:], poly_SiC_mu_at_depth_50_324_eff, label='50_324_eff')
+
 # plt.yscale('log')
+plt.legend()
 plt.grid()
 plt.show()
 
@@ -381,7 +435,7 @@ def fill_im_with_poly_mu(fill_values, bin_im):
 
 
 # %%
-out_im = fill_im_with_poly_mu(poly_SiC_mu_at_depth_50_0, bim_SiC)
+out_im = fill_im_with_poly_mu(poly_SiC_mu_at_depth_50_0_eff, bim_SiC)
 # plt.imshow(out_im, norm=LogNorm())
 plt.imshow(out_im)
 plt.colorbar()
@@ -409,7 +463,6 @@ def naive_reconstruction(bin_im, poly_mu_at_depth):
 
 # %%
 def show_porous_profiles(images, h_profile_line):
-
     plt.figure(figsize=(10, 5))
     for im in images:
         plt.plot(im[h_profile_line])
@@ -419,133 +472,215 @@ def show_porous_profiles(images, h_profile_line):
 
 # %%
 naive_recon_obj = naive_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_0)
+naive_recon_obj_eff = naive_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_0_eff)
 
-vmax = np.max(np.maximum(naive_recon_obj, im_SiC_0))
+vmax = np.max(np.maximum(np.maximum(im_SiC_0, naive_recon_obj), naive_recon_obj_eff))
 
-fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-im0 = ax[0].imshow(naive_recon_obj, vmax=vmax)
+fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+im0 = ax[0].imshow(im_SiC_0, vmax=vmax)
 plt.colorbar(im0, ax=ax[0])
-im1 = ax[1].imshow(im_SiC_0, vmax=vmax)
+im1 = ax[1].imshow(naive_recon_obj, vmax=vmax)
 plt.colorbar(im1, ax=ax[1])
+im2 = ax[2].imshow(naive_recon_obj_eff, vmax=vmax)
+plt.colorbar(im2, ax=ax[2])
 plt.show()
 
-# %%
 show_porous_profiles([im_SiC_0, naive_recon_obj], h_line_SiC)
+show_porous_profiles([im_SiC_0, naive_recon_obj_eff], h_line_SiC)
 
-# %%
+# %% jupyter={"outputs_hidden": true}
 naive_recon_obj = naive_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18)
+naive_recon_obj_eff = naive_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18_eff)
 
-vmax = np.max(np.maximum(naive_recon_obj, im_SiC_18))
+vmax = np.max(np.maximum(np.maximum(im_SiC_0, naive_recon_obj), naive_recon_obj_eff))
 
-fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-im0 = ax[0].imshow(naive_recon_obj, vmax=vmax)
+fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+im0 = ax[0].imshow(im_SiC_0, vmax=vmax)
 plt.colorbar(im0, ax=ax[0])
-im1 = ax[1].imshow(im_SiC_0, vmax=vmax)
+im1 = ax[1].imshow(naive_recon_obj, vmax=vmax)
 plt.colorbar(im1, ax=ax[1])
+im2 = ax[2].imshow(naive_recon_obj_eff, vmax=vmax)
+plt.colorbar(im2, ax=ax[2])
 plt.show()
 
-show_porous_profiles([im_SiC_18, naive_recon_obj], h_line_SiC)
+show_porous_profiles([im_SiC_0, naive_recon_obj], h_line_SiC)
+show_porous_profiles([im_SiC_0, naive_recon_obj_eff], h_line_SiC)
 
-# %%
+# %% jupyter={"outputs_hidden": true}
 naive_recon_obj = naive_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_324)
+naive_recon_obj_eff = naive_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_324_eff)
 
-vmax = np.max(np.maximum(naive_recon_obj, im_SiC_324))
+vmax = np.max(np.maximum(np.maximum(im_SiC_0, naive_recon_obj), naive_recon_obj_eff))
 
-fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-im0 = ax[0].imshow(naive_recon_obj, vmax=vmax)
+fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+im0 = ax[0].imshow(im_SiC_0, vmax=vmax)
 plt.colorbar(im0, ax=ax[0])
-im1 = ax[1].imshow(im_SiC_0, vmax=vmax)
+im1 = ax[1].imshow(naive_recon_obj, vmax=vmax)
 plt.colorbar(im1, ax=ax[1])
+im2 = ax[2].imshow(naive_recon_obj_eff, vmax=vmax)
+plt.colorbar(im2, ax=ax[2])
 plt.show()
 
-show_porous_profiles([im_SiC_324, naive_recon_obj], h_line_SiC)
+show_porous_profiles([im_SiC_0, naive_recon_obj], h_line_SiC)
+show_porous_profiles([im_SiC_0, naive_recon_obj_eff], h_line_SiC)
+
 
 # %% [markdown]
 # ## **µ-filled reconstruction**
 
 # %%
-angles = np.arange(0, 180, 1)
-sinogram = np.zeros((angles.size, bim_SiC.shape[0]))
-proj_sums = np.zeros(angles.size)
+def mu_filled_sum_reconstruction(bin_im, poly_mu_at_depth):
+    angles = np.arange(0, 180, 1)
+    sinogram = np.zeros((angles.size, bin_im.shape[0]))
+    
+    for j, angle in enumerate(angles):
+      rot_bin_im = rotate(bin_im, angle, order=1, preserve_range=True)
+      out_im = fill_im_with_poly_mu(poly_mu_at_depth, rot_bin_im)
+      sinogram[j] = np.sum(out_im, axis=1)
 
-for j, angle in enumerate(angles):
-  r_im = rotate(bim_SiC, angle, order=1, preserve_range=True)
-  out_im = np.zeros(r_im.shape)
-  for y, rim in enumerate(r_im):
-    for i, x in enumerate(np.where(rim > 0)[0]):
-      out_im[y, x] = fill_values[i] * rim[x]
-  sinogram[j] = np.sum(out_im, axis=1)
-  proj_sums[j] = np.sum(sinogram[j])
+    recon = gaussian(iradon(sinogram.T, theta=angles).T)
+    recon[bin_im == 0] = 0
+    recon[recon < 0] = 0
 
-plt.imshow(sinogram, aspect='auto')
+    return recon, sinogram
+    
+recon_SiC_50_0, sinogram_50_0 = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_0)
+
+# %% jupyter={"outputs_hidden": true}
+plt.imshow(sinogram_50_0, aspect='auto')
 plt.colorbar()
 plt.show()
 
-plt.plot(proj_sums)
+plt.plot(np.sum(sinogram_50_0, axis=1))
 plt.show()
 
-# %%
-recon = gaussian(iradon(sinogram.T, theta=angles).T)
-
-recon[bim_SiC == 0] = 0
-recon[recon < 0] = 0
-
-# %%
+# %% jupyter={"outputs_hidden": true}
 fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-im0 = ax[0].imshow(recon)
+im0 = ax[0].imshow(recon_SiC_50_0)
 plt.colorbar(im0, ax=ax[0])
 im1 = ax[1].imshow(im_SiC_0)
 plt.colorbar(im1, ax=ax[1])
 plt.show()
 
-# %%
-show_porous_profiles([im_SiC_0, recon], h_line_SiC)
-
-# %% [markdown]
-# ## **Gadolinium oxysulfide**
+# %% jupyter={"outputs_hidden": true}
+show_porous_profiles([im_SiC_0, recon_SiC_50_0], h_line_SiC)
 
 # %%
-xraydb.add_material('GOS', 'Gd2O2S', 7.34)
-GOS_mus = xraydb.material_mu('GOS', spec_Mo_50_energies * 1000) / 10
-GOS_t = np.exp(-GOS_mus * 22 * 0.001) # (22 * 0.001)mm == 22µm
+recon_SiC_50_0_eff, sinogram_50_0_eff = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_0_eff)
 
-# %% jupyter={"source_hidden": true}
-beta = 3
-en_gap = 4.6 # eV
-GOS_n_p = spec_Mo_50_energies * 1000 / (beta * en_gap)
-# GOS_n_p = np.ones(spec_Mo_50_energies.size)
-
-GOS_eff = GOS_n_p * (1 - GOS_t)
-
-plt.plot(spec_Mo_50_energies, GOS_eff)
-plt.grid()
+# %%
+plt.imshow(sinogram_50_0_eff, aspect='auto')
+plt.colorbar()
 plt.show()
 
-# %% jupyter={"source_hidden": true}
-qe = 60 # photon/keV
-
-GOS_n_p = spec_Mo_50_energies * qe
-# GOS_n_p = np.ones(spec_Mo_50_energies.size)
-
-GOS_eff = GOS_n_p * (1 - GOS_t)
-
-plt.plot(spec_Mo_50_energies, GOS_eff)
-plt.grid()
+plt.plot(np.sum(sinogram_50_0_eff, axis=1))
 plt.show()
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+im0 = ax[0].imshow(recon_SiC_50_0_eff)
+plt.colorbar(im0, ax=ax[0])
+im1 = ax[1].imshow(im_SiC_0)
+plt.colorbar(im1, ax=ax[1])
+plt.show()
+
+show_porous_profiles([im_SiC_0, recon_SiC_50_0_eff], h_line_SiC)
+
+# %%
+recon_SiC_50_18, sinogram_50_18 = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18)
+
+# %% jupyter={"outputs_hidden": true}
+plt.imshow(sinogram_50_18, aspect='auto')
+plt.colorbar()
+plt.show()
+
+plt.plot(np.sum(sinogram_50_18, axis=1))
+plt.show()
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+im0 = ax[0].imshow(recon_SiC_50_18)
+plt.colorbar(im0, ax=ax[0])
+im1 = ax[1].imshow(im_SiC_18)
+plt.colorbar(im1, ax=ax[1])
+plt.show()
+
+show_porous_profiles([im_SiC_18, recon_SiC_50_18], h_line_SiC)
+
+# %%
+recon_SiC_50_18_eff, sinogram_50_18_eff = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18_eff)
+
+# %% jupyter={"outputs_hidden": true}
+plt.imshow(sinogram_50_18_eff, aspect='auto')
+plt.colorbar()
+plt.show()
+
+plt.plot(np.sum(sinogram_50_18_eff, axis=1))
+plt.show()
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+im0 = ax[0].imshow(recon_SiC_50_18_eff)
+plt.colorbar(im0, ax=ax[0])
+im1 = ax[1].imshow(im_SiC_18)
+plt.colorbar(im1, ax=ax[1])
+plt.show()
+
+show_porous_profiles([im_SiC_18, recon_SiC_50_18_eff], h_line_SiC)
+
+# %%
+recon_SiC_50_324, sinogram_50_324 = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_324)
+
+# %% jupyter={"outputs_hidden": true}
+plt.imshow(sinogram_50_324, aspect='auto')
+plt.colorbar()
+plt.show()
+
+plt.plot(np.sum(sinogram_50_324, axis=1))
+plt.show()
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+im0 = ax[0].imshow(recon_SiC_50_324)
+plt.colorbar(im0, ax=ax[0])
+im1 = ax[1].imshow(im_SiC_18)
+plt.colorbar(im1, ax=ax[1])
+plt.show()
+
+show_porous_profiles([im_SiC_18, recon_SiC_50_324], h_line_SiC)
+
+# %%
+recon_SiC_50_324_eff, sinogram_50_324_eff = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_324_eff)
+
+# %% jupyter={"outputs_hidden": true}
+plt.imshow(sinogram_50_324_eff, aspect='auto')
+plt.colorbar()
+plt.show()
+
+plt.plot(np.sum(sinogram_50_324_eff, axis=1))
+plt.show()
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+im0 = ax[0].imshow(recon_SiC_50_324_eff)
+plt.colorbar(im0, ax=ax[0])
+im1 = ax[1].imshow(im_SiC_18)
+plt.colorbar(im1, ax=ax[1])
+plt.show()
+
+show_porous_profiles([im_SiC_18, recon_SiC_50_324_eff], h_line_SiC)
 
 
 # %% [markdown]
 # ## **Reconstruction with spectrum attenuation calculation and GOS**
 
-# %%
-def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, mat_att, voxel_size, GOS_eff, h_line=None):
+# %% jupyter={"source_hidden": true}
+def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, mat_att, voxel_size, GOS_eff=None, h_line=None):
 
     angles = np.arange(0, 180, 1)
     sino_shape = (angles.size, bin_im.shape[0])
     sinogram_wo_GOS = np.zeros(sino_shape)
-    sinogram_GOS = np.zeros(sino_shape)
+
+    have_GOS_eff = GOS_eff is not None
+    if have_GOS_eff:
+        sinogram_GOS = np.zeros(sino_shape)
     
-    current_spec_GOS = spectrum * GOS_eff
+    current_spec_GOS = spectrum * GOS_eff if have_GOS_eff else spectrum
     
     for j, angle in enumerate(angles):
         
@@ -554,38 +689,44 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, mat_att, voxel_size,
         trans_sums = np.exp(np.outer(-mat_att, ray_sums)).T
         
         passed_specs_wo_GOS = trans_sums * spectrum
-        passed_specs_GOS = passed_specs_wo_GOS * GOS_eff
-        passed_specs_GOS /= current_spec_GOS.sum()
+        if have_GOS_eff:
+            passed_specs_GOS = passed_specs_wo_GOS * GOS_eff
+            passed_specs_GOS /= current_spec_GOS.sum()
         
         passed_intensity_wo_GOS = np.sum(passed_specs_wo_GOS, axis=1)
-        passed_intensity_GOS = np.sum(passed_specs_GOS, axis=1)
+        if have_GOS_eff:
+            passed_intensity_GOS = np.sum(passed_specs_GOS, axis=1)
         
         sinogram_wo_GOS[j] = -np.log(passed_intensity_wo_GOS)
-        sinogram_GOS[j] = -np.log(passed_intensity_GOS)
+        if have_GOS_eff:
+            sinogram_GOS[j] = -np.log(passed_intensity_GOS)
         
     recon_wo_GOS = gaussian(iradon(sinogram_wo_GOS.T, theta=angles).T)
     recon_wo_GOS[bin_im == 0] = 0
     recon_wo_GOS[recon_wo_GOS < 0] = 0
     recon_wo_GOS /= voxel_size # convert to 1/mm values
+
+    if have_GOS_eff:
+        recon_GOS = gaussian(iradon(sinogram_GOS.T, theta=angles).T)
+        recon_GOS[bin_im == 0] = 0
+        recon_GOS[recon_GOS < 0] = 0
+        recon_GOS /= voxel_size # convert to 1/mm values
     
-    recon_GOS = gaussian(iradon(sinogram_GOS.T, theta=angles).T)
-    recon_GOS[bin_im == 0] = 0
-    recon_GOS[recon_GOS < 0] = 0
-    recon_GOS /= voxel_size # convert to 1/mm values
-    
-    fig, ax = plt.subplots(1, 3, figsize=(15, 5))
-    im0 = ax[0].imshow(recon_wo_GOS)
+    fig, ax = plt.subplots(1, 3 if have_GOS_eff else 2, figsize=(15 if have_GOS_eff else 10, 5))
+    im0 = ax[0].imshow(exp_im)
     plt.colorbar(im0, ax=ax[0])
-    im1 = ax[1].imshow(recon_GOS)
+    im1 = ax[1].imshow(recon_wo_GOS)
     plt.colorbar(im1, ax=ax[1])
-    im2 = ax[2].imshow(exp_im)
-    plt.colorbar(im2, ax=ax[2])
+    if have_GOS_eff:
+        im2 = ax[2].imshow(recon_GOS)
+        plt.colorbar(im2, ax=ax[2])
     plt.show()
     
     row = h_line or bin_im.shape[0] // 2
     plt.figure(figsize=(10, 5))
     plt.plot(recon_wo_GOS[row], linewidth=.5, c='green')
-    plt.plot(recon_GOS[row], linewidth=.5)
+    if have_GOS_eff:
+        plt.plot(recon_GOS[row], linewidth=.5)
     
     # exp_row = np.sum(exp_im[row-10:row+10], axis=0) / exp_im[row-10:row+10].shape[0]
     exp_row = exp_im[row]
@@ -595,17 +736,35 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, mat_att, voxel_size,
     plt.grid(color='gray')
     plt.show()
     
-    return recon_wo_GOS, recon_GOS
+    return (recon_wo_GOS, recon_GOS) if have_GOS_eff else recon_wo_GOS
 
 
 
 # %%
-_ = calc_object_mus_from_spectrum(bim_SiC, im_SiC_0, spec_Mo_50_0, att_SiC, voxel_size, GOS_eff, h_line_SiC)
+_ = calc_object_mus_from_spectrum(bim_SiC, im_SiC_0, spec_Mo_50_0, att_SiC, voxel_size, GOS_eff_50, h_line_SiC)
 
 # %% [markdown]
 # ## **Iohexol samles**
 #
 # Mo-anode 45keV spectrum
+
+# %% [markdown]
+# ## **GOS eff for Ihx**
+
+# %%
+GOS_mus_45 = xraydb.material_mu('GOS', spec_Mo_45_energies * 1000) / 10
+GOS_t_45 = np.exp(-GOS_mus_45 * 22 * 0.001) # (22 * 0.001)mm == 22µm
+
+qe = 60 # photon/keV
+
+GOS_n_p_45 = spec_Mo_45_energies * qe
+# GOS_n_p_45 = np.ones(spec_Mo_45_energies.size)
+
+GOS_eff_45 = GOS_n_p_45 * (1 - GOS_t_45)
+
+plt.plot(spec_Mo_45_energies, GOS_eff_45)
+plt.grid()
+plt.show()
 
 # %%
 # see spec_edit.ipynb to load, handle and save spectrum
@@ -627,11 +786,21 @@ plt.yscale('log')
 plt.grid()
 plt.show()
 
+# %%
+effective_spec_Mo_45 = spec_Mo_45 * GOS_eff_45
+effective_spec_Mo_45 /= effective_spec_Mo_45.sum()
+
+plt.plot(spec_Mo_45_energies, spec_Mo_45)
+plt.plot(spec_Mo_45_energies, effective_spec_Mo_45)
+plt.yscale('log')
+plt.grid()
+plt.show()
+
 
 # %% [markdown]
 # ## **Calc Iohexol water solution density**
 
-# %%
+# %% jupyter={"source_hidden": true}
 def calc_Ihx_solution(ihx_parts=1, wat_parts=1):
 
     # ihx_parts = 5 #4.17
@@ -665,42 +834,92 @@ def calc_Ihx_solution(ihx_parts=1, wat_parts=1):
     return hydrogen_coeff, oxygen_coeff, ihx_density_solution_2
 
 
-
-# %%
-# h_c, o_c, d = calc_Ihx_solution(5, 60) #4.17:60
-h_c, o_c, d = calc_Ihx_solution(4.5, 60) #4.17:60
-
-xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_c} O{o_c}', d)
-iohexol_mu = xraydb.material_mu('iohexol', spec_Mo_45_energies*1000) / 10
-plt.plot(spec_Mo_45_energies, iohexol_mu)
-plt.yscale('log')
-plt.show()
-
-print(iohexol_mu[371])
-
-# %% [markdown]
-# ## **GOS eff for Ihx**
-
-# %%
-GOS_mus_45 = xraydb.material_mu('GOS', spec_Mo_45_energies * 1000) / 10
-GOS_t_45 = np.exp(-GOS_mus_45 * 22 * 0.001) # (22 * 0.001)mm == 22µm
-
-qe = 60 # photon/keV
-
-GOS_n_p_45 = spec_Mo_45_energies * qe
-# GOS_n_p_45 = np.ones(spec_Mo_45_energies.size)
-
-GOS_eff_45 = GOS_n_p_45 * (1 - GOS_t_45)
-
-plt.plot(spec_Mo_45_energies, GOS_eff_45)
-plt.grid()
-plt.show()
-
 # %% [markdown]
 # ## **Ihx samples**
 
 # %% [markdown]
 # ## Water/Iohexol 1/12
+
+# %%
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/e82c1068-5c0f-40c3-9dba-4e811b566344.npy'
+with open(input_path, 'rb') as f:
+  im_ihx_1_12_mono = np.load(f)
+
+# print('im_ihx_1_12_mono', im_ihx_1_12_mono.shape)
+
+im_ihx_1_12_mono = im_ihx_1_12_mono[40:1260, 40:1260]
+im_ihx_1_12_mono[im_ihx_1_12_mono < 0] = 0
+
+# print('im_ihx_1_12_mono', im_ihx_1_12_mono.shape)
+
+plt.imshow(im_ihx_1_12_mono)
+plt.colorbar()
+plt.show()
+
+plt.plot(im_ihx_1_12_mono[650])
+plt.plot(sp.ndimage.gaussian_filter(im_ihx_1_12_mono[650], sigma=2))
+plt.show()
+
+print(np.mean(im_ihx_1_12_mono[650, 200:1000]))
+
+# %%
+# h_c, o_c, d = calc_Ihx_solution(5, 60) #4.17:60
+h_c, o_c, d = calc_Ihx_solution(4.5, 60) #4.17:60
+
+xraydb.add_material('iohexol_1_12', f'C19H26I3N3O9 H{h_c} O{o_c}', d)
+iohexol_mu_1_12 = xraydb.material_mu('iohexol_1_12', spec_Mo_45_energies*1000) / 10
+plt.plot(spec_Mo_45_energies, iohexol_mu_1_12)
+plt.yscale('log')
+plt.show()
+
+spec_45_MoKa_idx = 371 # 371 — index for 17.479 keV
+iohexol_MoKa_mu_1_12 = iohexol_mu_1_12[spec_45_MoKa_idx]
+print(iohexol_MoKa_mu_1_12)
+
+# %%
+bim_ihx_1_12_mono = (gaussian(im_ihx_1_12_mono, sigma=3) > 0.1).astype(int)
+
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow(gaussian(im_ihx_1_12_mono))
+ax[1].imshow(bim_ihx_1_12_mono)
+
+# %%
+_ = calc_object_mus_from_spectrum(bim_ihx_1_12_mono, gaussian(im_ihx_1_12_mono), np.array([1]), iohexol_MoKa_mu_1_12, voxel_size)
+
+# %%
+poly_mu_ihx_1_12 = (iohexol_mu_1_12 * spec_Mo_45).sum()
+poly_mu_ihx_1_12_eff = (iohexol_mu_1_12 * effective_spec_Mo_45).sum()
+print(poly_mu_ihx_1_12)
+print(poly_mu_ihx_1_12_eff)
+
+# %%
+voxel_size = 0.009 # in mm — 0.01 = 10µm
+total_lenght = 10 # 1cm
+length_ticks = np.arange(0, total_lenght, voxel_size)
+
+transmissions_ihx_1_12_at_depths = np.exp(np.outer(-iohexol_mu_1_12, length_ticks)).T
+
+passed_spectrums_45 = transmissions_ihx_1_12_at_depths * spec_Mo_45
+passed_spectrums_45_eff = transmissions_ihx_1_12_at_depths * effective_spec_Mo_45
+
+print(passed_spectrums_45.shape, passed_spectrums_45_eff.shape)
+
+plt.plot(passed_spectrums_45[0])
+plt.plot(passed_spectrums_45_eff[0])
+plt.yscale('log')
+plt.show()
+
+# %%
+poly_ihx_1_12_mu_at_depth = calc_mu_at_depths(passed_spectrums_45)
+poly_ihx_1_12_mu_at_depth_eff = calc_mu_at_depths(passed_spectrums_45_eff)
+
+plt.plot(length_ticks[1:], poly_ihx_1_12_mu_at_depth, label='45')
+plt.plot(length_ticks[1:], poly_ihx_1_12_mu_at_depth_eff, label='45_eff')
+
+# plt.yscale('log')
+plt.legend()
+plt.grid()
+plt.show()
 
 # %%
 input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/dbace4ca-3ba6-4a8a-b191-d52fe70c8a4f.npy'
@@ -733,39 +952,42 @@ ax[1].imshow(bim_ihx_1_12)
 plt.show()
 
 # %%
-_ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spec_Mo_45, iohexol_mu, voxel_size, GOS_eff_45)
-
-# %%
-input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/e82c1068-5c0f-40c3-9dba-4e811b566344.npy'
-with open(input_path, 'rb') as f:
-  im_ihx_1_12_mono = np.load(f)
-
-# print('im_ihx_1_12_mono', im_ihx_1_12_mono.shape)
-
-im_ihx_1_12_mono = im_ihx_1_12_mono[40:1260, 40:1260]
-im_ihx_1_12_mono[im_ihx_1_12_mono < 0] = 0
-
-# print('im_ihx_1_12_mono', im_ihx_1_12_mono.shape)
-
-plt.imshow(im_ihx_1_12_mono)
+out_im = fill_im_with_poly_mu(poly_ihx_1_12_mu_at_depth_eff,bim_ihx_1_12)
+# plt.imshow(out_im, norm=LogNorm())
+plt.imshow(out_im)
 plt.colorbar()
 plt.show()
 
-plt.plot(im_ihx_1_12_mono[650])
-plt.plot(sp.ndimage.gaussian_filter(im_ihx_1_12_mono[650], sigma=2))
+# %%
+naive_recon_obj = naive_reconstruction(bim_ihx_1_12, poly_ihx_1_12_mu_at_depth)
+naive_recon_obj_eff = naive_reconstruction(bim_ihx_1_12, poly_ihx_1_12_mu_at_depth_eff)
+
+vmax = np.max(np.maximum(np.maximum(im_ihx_1_12, naive_recon_obj), naive_recon_obj_eff))
+
+fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+im0 = ax[0].imshow(im_ihx_1_12, vmax=vmax)
+plt.colorbar(im0, ax=ax[0])
+im1 = ax[1].imshow(naive_recon_obj, vmax=vmax)
+plt.colorbar(im1, ax=ax[1])
+im2 = ax[2].imshow(naive_recon_obj_eff, vmax=vmax)
+plt.colorbar(im2, ax=ax[2])
 plt.show()
 
-print(np.mean(im_ihx_1_12_mono[650, 200:1000]))
+show_porous_profiles([im_ihx_1_12, naive_recon_obj], im_ihx_1_12.shape[0]//2)
+show_porous_profiles([im_ihx_1_12, naive_recon_obj_eff], im_ihx_1_12.shape[0]//2)
 
 # %%
-bim_ihx_1_12_mono = (gaussian(im_ihx_1_12_mono, sigma=3) > 0.1).astype(int)
-
-fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-ax[0].imshow(gaussian(im_ihx_1_12_mono))
-ax[1].imshow(bim_ihx_1_12_mono)
+_ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spec_Mo_45, iohexol_mu_1_12, voxel_size, GOS_eff_45)
 
 # %%
-_ = calc_object_mus_from_spectrum(bim_ihx_1_12_mono, gaussian(im_ihx_1_12_mono), np.array([1]), 0.18519, voxel_size, np.array([1]))
+
+# %%
+
+# %%
+
+# %%
+
+# %%
 
 # %% [markdown]
 # ## Water/Iohexol 1/1
