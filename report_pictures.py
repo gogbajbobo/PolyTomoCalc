@@ -979,29 +979,8 @@ show_porous_profiles([im_ihx_1_12, naive_recon_obj_eff], im_ihx_1_12.shape[0]//2
 # %%
 _ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spec_Mo_45, iohexol_mu_1_12, voxel_size, GOS_eff_45)
 
-# %%
-
-# %%
-
-# %%
-
-# %%
-
-# %%
-
 # %% [markdown]
 # ## Water/Iohexol 1/1
-
-# %%
-h_c, o_c, d = calc_Ihx_solution(0.85, 1)
-
-xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_c} O{o_c}', d)
-iohexol_mu = xraydb.material_mu('iohexol', spec_Mo_45_energies*1000) / 10
-plt.plot(spec_Mo_45_energies, iohexol_mu)
-plt.yscale('log')
-plt.show()
-
-print(iohexol_mu[371])
 
 # %%
 input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/cd130f11-38b7-4de8-ad96-85f30f8a6105.npy'
@@ -1034,45 +1013,31 @@ ax[1].imshow(bim_ihx_1_1)
 plt.show()
 
 # %%
-_ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), spec_Mo_45, iohexol_mu, voxel_size, GOS_eff_45)
+h_c, o_c, d = calc_Ihx_solution(0.85, 1)
 
-# %%
-input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/82fc7477-dafb-4950-aea5-6e522910181d.npy'
-with open(input_path, 'rb') as f:
-  im_ihx_1_1_mono = np.load(f)
-
-# print('im_ihx_1_1_mono', im_ihx_1_1_mono.shape)
-
-im_ihx_1_1_mono = im_ihx_1_1_mono[40:1260, 40:1260]
-im_ihx_1_1_mono[im_ihx_1_1_mono < 0] = 0
-
-# print('im_ihx_1_1_mono', im_ihx_1_1_mono.shape)
-
-plt.imshow(im_ihx_1_1_mono)
-plt.colorbar()
+xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_c} O{o_c}', d)
+iohexol_1_1_mu = xraydb.material_mu('iohexol', spec_Mo_45_energies*1000) / 10
+plt.plot(spec_Mo_45_energies, iohexol_1_1_mu)
+plt.yscale('log')
+# plt.xscale('log')
 plt.show()
 
-plt.plot(im_ihx_1_1_mono[650])
-plt.plot(sp.ndimage.gaussian_filter(im_ihx_1_1_mono[650], sigma=2))
-plt.show()
-
-print(np.mean(im_ihx_1_1_mono[650, 200:1000]))
+# spec_MoKa_idx = 348 # 348 — index for 17.479 keV
+iohexol_MoKa_mu = iohexol_1_1_mu[spec_45_MoKa_idx]
+print(iohexol_MoKa_mu)
 
 # %%
-bim_ihx_1_1_mono = (gaussian(im_ihx_1_1_mono, sigma=3) > 0.15).astype(int)
-
-fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-ax[0].imshow(gaussian(im_ihx_1_1_mono))
-ax[1].imshow(bim_ihx_1_1_mono)
+_ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), spec_Mo_45, iohexol_1_1_mu, voxel_size, GOS_eff_45)
 
 # %%
-_ = calc_object_mus_from_spectrum(bim_ihx_1_1_mono, gaussian(im_ihx_1_1_mono), np.array([1]), 0.6043, voxel_size, np.array([1]))
+_ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), effective_spec_Mo_45, iohexol_1_1_mu, voxel_size)
 
 # %% [markdown]
 # ## **generate SpekPy spectrum**
 
 # %%
 en_step = np.mean(spec_Mo_45_energies[1:] - spec_Mo_45_energies[:-1])
+en_step
 
 # %%
 s = spekpy.Spek(kvp=45, dk=en_step, targ='Mo')
@@ -1108,17 +1073,17 @@ spekpy_Mo_45 = np.copy(intensities)
 # ## **GOS efficiensy**
 
 # %%
-GOS_mus_45 = xraydb.material_mu('GOS', spekpy_Mo_45_energies * 1000) / 10
-GOS_t_45 = np.exp(-GOS_mus_45 * 22 * 0.001) # (22 * 0.001)mm == 22µm
+GOS_mus_45_spekpy = xraydb.material_mu('GOS', spekpy_Mo_45_energies * 1000) / 10
+GOS_t_45_spekpy = np.exp(-GOS_mus_45_spekpy * 22 * 0.001) # (22 * 0.001)mm == 22µm
 
 qe = 60 # photon/keV
 
-GOS_n_p_45 = spekpy_Mo_45_energies * qe
+GOS_n_p_45_spekpy = spekpy_Mo_45_energies * qe
 # GOS_n_p_45 = np.ones(spekpy_Mo_45_energies.size)
 
-GOS_eff_45 = GOS_n_p_45 * (1 - GOS_t_45)
+GOS_eff_45_spekpy = GOS_n_p_45_spekpy * (1 - GOS_t_45_spekpy)
 
-plt.plot(spekpy_Mo_45_energies, GOS_eff_45)
+plt.plot(spekpy_Mo_45_energies, GOS_eff_45_spekpy)
 plt.grid()
 plt.show()
 
@@ -1127,36 +1092,86 @@ plt.show()
 h_c, o_c, d = calc_Ihx_solution(4.5, 60) #4.17:60
 
 xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_c} O{o_c}', d)
-iohexol_1_12_mu = xraydb.material_mu('iohexol', spekpy_Mo_45_energies*1000) / 10
-plt.plot(spekpy_Mo_45_energies, iohexol_1_12_mu)
+iohexol_1_12_mu_spekpy = xraydb.material_mu('iohexol', spekpy_Mo_45_energies*1000) / 10
+plt.plot(spekpy_Mo_45_energies, iohexol_1_12_mu_spekpy)
 plt.yscale('log')
 plt.show()
 
 spekpy_MoKa_idx = 348 # 348 — index for 17.479 keV
-iohexol_MoKa_mu = iohexol_1_12_mu[spekpy_MoKa_idx]
-print(iohexol_MoKa_mu)
+iohexol_MoKa_mu_spekpy = iohexol_1_12_mu_spekpy[spekpy_MoKa_idx]
+print(iohexol_MoKa_mu_spekpy)
 
 # %%
-_ = calc_object_mus_from_spectrum(bim_ihx_1_12, gaussian(im_ihx_1_12), spekpy_Mo_45, iohexol_1_12_mu, voxel_size, GOS_eff_45)
+_ = calc_object_mus_from_spectrum(
+    bim_ihx_1_12, 
+    gaussian(im_ihx_1_12), 
+    spekpy_Mo_45, 
+    iohexol_1_12_mu_spekpy, 
+    voxel_size, 
+    GOS_eff_45_spekpy
+)
 
 # %%
 h_c, o_c, d = calc_Ihx_solution(0.85, 1)
 
 xraydb.add_material('iohexol', f'C19H26I3N3O9 H{h_c} O{o_c}', d)
-iohexol_1_1_mu = xraydb.material_mu('iohexol', spekpy_Mo_45_energies*1000) / 10
-plt.plot(spekpy_Mo_45_energies, iohexol_1_1_mu)
+iohexol_1_1_mu_spekpy = xraydb.material_mu('iohexol', spekpy_Mo_45_energies*1000) / 10
+plt.plot(spekpy_Mo_45_energies, iohexol_1_1_mu_spekpy)
 plt.yscale('log')
+# plt.xscale('log')
 plt.show()
 
-spekpy_MoKa_idx = 348 # 348 — index for 17.479 keV
-iohexol_MoKa_mu = iohexol_1_1_mu[spekpy_MoKa_idx]
-print(iohexol_MoKa_mu)
+iohexol_MoKa_mu_spekpy = iohexol_1_1_mu_spekpy[spekpy_MoKa_idx]
+print(iohexol_MoKa_mu_spekpy)
 
 # %%
-_ = calc_object_mus_from_spectrum(bim_ihx_1_1, gaussian(im_ihx_1_1), spekpy_Mo_45, iohexol_1_1_mu, voxel_size, GOS_eff_45)
+_ = calc_object_mus_from_spectrum(
+    bim_ihx_1_1, 
+    gaussian(im_ihx_1_1), 
+    spekpy_Mo_45, 
+    iohexol_1_1_mu_spekpy, 
+    voxel_size, 
+    GOS_eff_45_spekpy
+)
 
 # %%
 whos
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
+
+# %%
 
 # %% [markdown]
 # ## **Generate Mo 50keV spectrum**
