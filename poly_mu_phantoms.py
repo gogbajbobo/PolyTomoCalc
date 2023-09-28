@@ -33,7 +33,7 @@ spek_intensities /= spek_intensities.sum()
 
 s = spekpy.Spek(kvp=50, dk=0.5, targ='Mo')
 s.filter('Air', 1440)
-s.filter('Al', 2)
+s.filter('Al', 10)
 _, spek_intensities_Al_filter = s.get_spectrum()
 spek_intensities_Al_filter /= spek_intensities_Al_filter.sum()
 
