@@ -489,7 +489,7 @@ plt.show()
 show_porous_profiles([im_SiC_0, naive_recon_obj], h_line_SiC)
 show_porous_profiles([im_SiC_0, naive_recon_obj_eff], h_line_SiC)
 
-# %% jupyter={"outputs_hidden": true}
+# %%
 naive_recon_obj = naive_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18)
 naive_recon_obj_eff = naive_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18_eff)
 
@@ -507,7 +507,7 @@ plt.show()
 show_porous_profiles([im_SiC_0, naive_recon_obj], h_line_SiC)
 show_porous_profiles([im_SiC_0, naive_recon_obj_eff], h_line_SiC)
 
-# %% jupyter={"outputs_hidden": true}
+# %%
 naive_recon_obj = naive_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_324)
 naive_recon_obj_eff = naive_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_324_eff)
 
@@ -547,7 +547,7 @@ def mu_filled_sum_reconstruction(bin_im, poly_mu_at_depth):
     
 recon_SiC_50_0, sinogram_50_0 = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_0)
 
-# %% jupyter={"outputs_hidden": true}
+# %%
 plt.imshow(sinogram_50_0, aspect='auto')
 plt.colorbar()
 plt.show()
@@ -555,7 +555,7 @@ plt.show()
 plt.plot(np.sum(sinogram_50_0, axis=1))
 plt.show()
 
-# %% jupyter={"outputs_hidden": true}
+# %%
 fig, ax = plt.subplots(1, 2, figsize=(10, 5))
 im0 = ax[0].imshow(recon_SiC_50_0)
 plt.colorbar(im0, ax=ax[0])
@@ -563,7 +563,7 @@ im1 = ax[1].imshow(im_SiC_0)
 plt.colorbar(im1, ax=ax[1])
 plt.show()
 
-# %% jupyter={"outputs_hidden": true}
+# %%
 show_porous_profiles([im_SiC_0, recon_SiC_50_0], h_line_SiC)
 
 # %%
@@ -589,7 +589,7 @@ show_porous_profiles([im_SiC_0, recon_SiC_50_0_eff], h_line_SiC)
 # %%
 recon_SiC_50_18, sinogram_50_18 = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18)
 
-# %% jupyter={"outputs_hidden": true}
+# %%
 plt.imshow(sinogram_50_18, aspect='auto')
 plt.colorbar()
 plt.show()
@@ -609,7 +609,7 @@ show_porous_profiles([im_SiC_18, recon_SiC_50_18], h_line_SiC)
 # %%
 recon_SiC_50_18_eff, sinogram_50_18_eff = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18_eff)
 
-# %% jupyter={"outputs_hidden": true}
+# %%
 plt.imshow(sinogram_50_18_eff, aspect='auto')
 plt.colorbar()
 plt.show()
@@ -629,7 +629,7 @@ show_porous_profiles([im_SiC_18, recon_SiC_50_18_eff], h_line_SiC)
 # %%
 recon_SiC_50_324, sinogram_50_324 = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_324)
 
-# %% jupyter={"outputs_hidden": true}
+# %%
 plt.imshow(sinogram_50_324, aspect='auto')
 plt.colorbar()
 plt.show()
@@ -649,7 +649,7 @@ show_porous_profiles([im_SiC_18, recon_SiC_50_324], h_line_SiC)
 # %%
 recon_SiC_50_324_eff, sinogram_50_324_eff = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_324_eff)
 
-# %% jupyter={"outputs_hidden": true}
+# %%
 plt.imshow(sinogram_50_324_eff, aspect='auto')
 plt.colorbar()
 plt.show()
