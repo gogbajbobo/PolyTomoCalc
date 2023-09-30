@@ -368,6 +368,7 @@ plt.plot(length_ticks, np.sum(passed_spectrums_50_324_eff, axis=1), label='50_32
 # plt.plot(length_ticks, np.sum(p_specs_norm_50_324_eff, axis=1))
 
 plt.legend()
+plt.grid()
 plt.show()
 
 print(p_specs_norm_50_0.shape)
