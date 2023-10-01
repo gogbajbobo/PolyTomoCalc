@@ -268,5 +268,6 @@ plt.show()
 
 # %%
 print('test')
+print('test')
 
 # %%
