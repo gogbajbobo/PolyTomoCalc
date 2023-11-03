@@ -62,7 +62,10 @@ spectrum_filtered[980:] = 0
 spectrum_filtered /= spectrum_filtered.sum()
 
 plt.plot(en_keV, spectrum_filtered)
+plt.grid()
 plt.yscale('log')
+plt.xlabel('Energy, keV')
+plt.ylabel('Intensity, a.u.')
 
 
 # %%
@@ -164,7 +167,9 @@ np.save('Mo_spec_poly_45_energies', en_keV)
 # %%
 
 # %%
-spectrum_mono_1 = extract_data('/Users/grimax/Desktop/tmp/Iohexol_samples/20230904 -- Mo-tube-mono-pyrographite-45kV .mca')
+en_keV = np.array([17.479 + (i - 371) * en_step for i in np.arange(spectrum.shape[0])])
+
+spectrum_mono_1 = extract_data('/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/20230904 -- Mo-tube-mono-pyrographite-45kV .mca')
 spectrum_mono_1 = spectrum_mono_1.astype('float')
 spectrum_mono_1 /= spectrum_mono_1.sum()
 plt.plot(en_keV, spectrum_mono_1)
@@ -172,7 +177,7 @@ plt.yscale('log')
 plt.grid()
 
 # %%
-spectrum_mono_2 = extract_data('/Users/grimax/Desktop/tmp/Iohexol_samples/20230904 -- Mo-tube-mono-pyrographite-30kV .mca')
+spectrum_mono_2 = extract_data('/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/20230904 -- Mo-tube-mono-pyrographite-30kV .mca')
 spectrum_mono_2 = spectrum_mono_2.astype('float')
 spectrum_mono_2 /= spectrum_mono_2.sum()
 plt.plot(en_keV, spectrum_mono_2)
