@@ -31,8 +31,6 @@ s.filter('Air', 1440)
 spek_energies, spek_intensities = s.get_spectrum()
 spek_intensities /= spek_intensities.sum()
 
-s = spekpy.Spek(kvp=50, dk=0.5, targ='Mo')
-s.filter('Air', 1440)
 s.filter('Al', 10)
 _, spek_intensities_Al_filter = s.get_spectrum()
 spek_intensities_Al_filter /= spek_intensities_Al_filter.sum()
@@ -73,6 +71,7 @@ spek_intensities_eff_Al_filter /= spek_intensities_eff_Al_filter.sum()
 
 plt.plot(spek_energies, spek_intensities)
 plt.plot(spek_energies, spek_intensities_eff)
+plt.plot(spek_energies, spek_intensities_Al_filter)
 plt.plot(spek_energies, spek_intensities_eff_Al_filter)
 plt.yscale('log')
 plt.ylim(1e-4, 1e0)
@@ -82,9 +81,13 @@ plt.show()
 # %%
 att_SiC = xraydb.material_mu('SiC', spek_energies * 1000) / 10
 att_Fe = xraydb.material_mu('Fe', spek_energies * 1000) / 10
+att_H2O = xraydb.material_mu('Water', spek_energies * 1000) / 10
+att_Air = xraydb.material_mu('Air', spek_energies * 1000) / 10
 
 plt.plot(spek_energies, att_SiC)
 plt.plot(spek_energies, att_Fe)
+plt.plot(spek_energies, att_H2O)
+plt.plot(spek_energies, att_Air)
 plt.yscale('log')
 plt.grid()
 plt.show()
@@ -146,7 +149,7 @@ im2 = np.zeros(shape).astype(int)
 rr, cc = disk((size//2, size//2), size//3, shape=shape)
 im2[rr, cc] = 1
 
-# rr, cc = disk((size//3, size//2), size//8, shape=shape)
+# rr, cc = disk((size//3, size//2), size//16, shape=shape)
 rr, cc = disk((size//3, size//2), size//12, shape=shape)
 im2[rr, cc] = 2
 
@@ -208,7 +211,7 @@ im_2 = ax[2].imshow(recon_3)
 plt.colorbar(im_2, ax=ax[2])
 plt.show()
 
-row = im.shape[0] // 2
+row = im1.shape[0] // 2
 plt.figure(figsize=(10, 5))
 plt.plot(recon_0[row])
 plt.plot(recon_1[row])
@@ -220,5 +223,92 @@ plt.show()
 
 
 # %%
+fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+im_0 = ax[0].imshow(recon_0)
+plt.colorbar(im_0, ax=ax[0])
+ax[0].axhline(recon_0.shape[0]//2, linewidth=4, c='white', alpha=0.5)
+im_1 = ax[1].imshow(recon_1)
+plt.colorbar(im_1, ax=ax[1])
+ax[1].axhline(recon_0.shape[0]//2, linewidth=4, c='white', alpha=0.5)
+plt.show()
+
+# plt.imshow(recon_1)
+# plt.colorbar()
+# plt.show()
+
+row = im1.shape[0] // 2
+plt.figure(figsize=(10, 5))
+plt.plot(recon_0[row], label='SiC')
+plt.plot(recon_1[row], label='SiC + Fe')
+plt.ylabel('Коэффициент ослабления, 1/мм')
+plt.grid(color='gray')
+plt.legend()
+plt.show()
+
+# %%
+# attenuations = np.array([att_SiC, att_Air])
+attenuations = np.array([att_SiC, np.zeros(att_SiC.shape)])
+recon_4 = recon_multiple_matters(im2, attenuations, spek_intensities_eff, voxel_size)
+
+# %%
+fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+im_0 = ax[0].imshow(recon_1)
+plt.colorbar(im_0, ax=ax[0])
+im_1 = ax[1].imshow(recon_4)
+plt.colorbar(im_1, ax=ax[1])
+plt.show()
+
+plt.imshow(recon_4)
+plt.colorbar()
+plt.show()
+
+plt.imshow(recon_4)
+plt.colorbar()
+plt.axhline(recon_4.shape[0]//2, linewidth=4, c='white', alpha=0.5)
+plt.axvline(recon_4.shape[0]//2, linewidth=4, c='white', alpha=0.5)
+plt.show()
+
+
+row = im1.shape[0] // 2
+plt.figure(figsize=(10, 5))
+plt.plot(recon_0[row], label='SiC')
+# plt.plot(recon_1[row])
+plt.plot(recon_4[row], label='SiC + void')
+plt.xlabel('Горизонтальное сечение')
+plt.ylabel('Коэффициент ослабления, 1/мм')
+plt.grid(color='gray')
+plt.legend()
+plt.show()
+
+# %%
+row = im1.shape[0] // 2
+plt.figure(figsize=(10, 5))
+plt.plot(recon_0[:, row], label='SiC')
+plt.plot(recon_4[:, row], label='SiC + void')
+plt.xlabel('Вертикальное сечение')
+plt.ylabel('Коэффициент ослабления, 1/мм')
+plt.grid(color='gray')
+plt.legend()
+plt.show()
+
+# %%
+recon_5 = recon_multiple_matters(im2, np.array([att_SiC, att_SiC]), spek_intensities_eff, voxel_size)
+recon_6 = recon_multiple_matters(im2, np.array([att_Air, att_Air]), spek_intensities_eff, voxel_size)
+
+# %%
+fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+im_0 = ax[0].imshow(recon_5)
+plt.colorbar(im_0, ax=ax[0])
+im_1 = ax[1].imshow(recon_6)
+plt.colorbar(im_1, ax=ax[1])
+plt.show()
+
+row = im1.shape[0] // 2
+plt.figure(figsize=(10, 5))
+# plt.plot(recon_5[row])
+plt.plot(recon_6[row])
+plt.ylabel('Коэффициент ослабления, 1/мм')
+plt.grid(color='gray')
+plt.show()
 
 # %%
