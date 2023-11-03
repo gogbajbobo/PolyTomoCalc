@@ -256,7 +256,7 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, energies, mat_att, v
   plt.grid(color='gray')
   plt.show()
 
-  # return recon_wo_GOS, recon_GOS, recon_GOS_diff
+  return recon_wo_GOS, recon_GOS#, recon_GOS_diff
 
 
 
@@ -267,7 +267,7 @@ voxel_size = 0.0009 # in cm — 0.001 = 10µm
 calc_object_mus_from_spectrum(bim, gaussian(im), spectrum_filtered, en_keV*1000, iohexol_mu*10, voxel_size)
 
 # %% colab={"base_uri": "https://localhost:8080/", "height": 899} id="QKSMj2DJrkEb" outputId="ff1568af-620c-4c60-e443-e34a2b999300"
-input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/e82c1068-5c0f-40c3-9dba-4e811b566344.npy'
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/e82c1068-5c0f-40c3-9dba-4e811b566344.npy'
 with open(input_path, 'rb') as f:
   im_mono = np.load(f)
 
@@ -398,7 +398,7 @@ with open('Mo_spec_mono_45.npy', 'rb') as f:
 plt.plot(en_keV, spec_mono)
 
 # %%
-input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/82fc7477-dafb-4950-aea5-6e522910181d.npy'
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/82fc7477-dafb-4950-aea5-6e522910181d.npy'
 with open(input_path, 'rb') as f:
   im = np.load(f)
 
@@ -457,7 +457,7 @@ plt.xlim([17, 20])
 # plt.yscale('log')
 
 # %%
-input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/cd130f11-38b7-4de8-ad96-85f30f8a6105.npy'
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/cd130f11-38b7-4de8-ad96-85f30f8a6105.npy'
 with open(input_path, 'rb') as f:
   im = np.load(f)
 
@@ -489,13 +489,41 @@ ax[1].imshow(bim)
 # %%
 voxel_size = 0.0009 # in cm — 0.001 = 10µm
 
-calc_object_mus_from_spectrum(bim, gaussian(im), spectrum_filtered, en_keV*1000, iohexol_mu*10, voxel_size)
+_, m_im = calc_object_mus_from_spectrum(bim, gaussian(im), spectrum_filtered, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
+plt.imshow(m_im)
+plt.colorbar()
+plt.show()
+
+plt.figure(figsize=(10, 5))
+plt.plot(gaussian(im, sigma=5)[610], label='Эксперимент')
+plt.plot(m_im[610], label='Моделирование')
+plt.xlabel('voxels')
+plt.ylabel('Attenuation µ, 1/mm')
+plt.grid()
+plt.legend()
+plt.show()
 
 # %%
 voxel_size = 0.0009 # in cm — 0.001 = 10µm
 
 # wo_GOS, w_GOS, diff_GOS = calc_object_mus_from_spectrum(bim, gaussian(im), spectrum_filtered, en_keV*1000, iohexol_mu*10, voxel_size)
-calc_object_mus_from_spectrum(bim, gaussian(im), sf, en_keV*1000, iohexol_mu*10, voxel_size)
+_, m_im = calc_object_mus_from_spectrum(bim, gaussian(im), sf, en_keV*1000, iohexol_mu*10, voxel_size)
+
+# %%
+plt.imshow(m_im)
+plt.colorbar()
+plt.show()
+
+plt.figure(figsize=(10, 5))
+plt.plot(gaussian(im, sigma=5)[610], label='Эксперимент')
+plt.plot(m_im[610], label='Моделирование')
+plt.xlabel('voxels')
+plt.ylabel('Attenuation µ, 1/mm')
+plt.grid()
+plt.legend()
+plt.show()
 
 # %%
 ihx_d = 2.2 #g/cm3
@@ -535,7 +563,7 @@ plt.show()
 print(iohexol_mu[371])
 
 # %%
-input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/f244cee7-79da-4190-8442-560e3f3a4622.npy'
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/f244cee7-79da-4190-8442-560e3f3a4622.npy'
 with open(input_path, 'rb') as f:
   im = np.load(f)
 
@@ -575,7 +603,7 @@ voxel_size = 0.0009 # in cm — 0.001 = 10µm
 calc_object_mus_from_spectrum(bim, gaussian(im), sf, en_keV*1000, iohexol_mu*10, voxel_size)
 
 # %%
-input_path = '/Users/grimax/Desktop/tmp/Iohexol_samples/246198bb-212e-43a1-92b2-30bc2c46a351.npy'
+input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/246198bb-212e-43a1-92b2-30bc2c46a351.npy'
 with open(input_path, 'rb') as f:
   im = np.load(f)
 
