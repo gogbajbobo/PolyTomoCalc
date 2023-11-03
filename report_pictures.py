@@ -143,6 +143,7 @@ bim_SiC = (bim_SiC > thresh).astype(int)
 # bim_SiC = gaussian(median(bim_SiC)) > 2
 
 plt.imshow(bim_SiC)
+plt.axis('off')
 plt.show()
 
 # %%
@@ -172,6 +173,10 @@ with open(input_path, 'rb') as f:
   im_SiC_0 = np.load(f)
 
 im_SiC_0 = process_porous_pic(im_SiC_0, bim_SiC)
+
+plt.imshow(im_SiC_0)
+plt.axis('off')
+plt.show()
 
 show_porous_pic_with_profile(im_SiC_0, h_line_SiC)
 
@@ -234,6 +239,54 @@ plt.grid()
 plt.legend()
 plt.show()
 
+# %%
+input_path = 'Mo_spec_poly_50.npy'
+with open(input_path, 'rb') as f:
+    spec_Mo_50_0_counts = np.load(f)[-spec_Mo_50_energies.size:].astype(float)
+
+
+plt.figure(figsize=(10, 5))
+plt.plot(spec_Mo_50_energies, spec_Mo_50_0_counts)
+# plt.ylim(1e-8, 1e-1)
+plt.yscale('log')
+plt.xlabel('Energy, keV', fontsize=16)
+plt.ylabel('Photons, count', fontsize=16)
+# plt.grid()
+plt.show()
+
+# %%
+plt.figure(figsize=(10, 5))
+plt.plot(spec_Mo_50_energies, spec_Mo_50_0_counts)
+# plt.ylim(1e-8, 1e-1)
+plt.yscale('log')
+plt.xlabel('Energy, keV', fontsize=16)
+plt.ylabel('Photons, count', fontsize=16)
+plt.grid()
+plt.show()
+
+# %%
+air_mu = xraydb.material_mu('Air', [17500, 19600]) / 10
+air_t = np.exp(-air_mu * 1440)
+
+slice_index = slice(270, 300)
+# plt.plot(spec_Mo_50_energies[slice_index], spec_Mo_50_0_counts[slice_index])
+# plt.show()
+
+max1 = np.max(spec_Mo_50_0_counts[slice_index])
+
+slice_index = slice(300, 350)
+# plt.plot(spec_Mo_50_energies[slice_index], spec_Mo_50_0_counts[slice_index])
+# plt.show()
+
+max2 = np.max(spec_Mo_50_0_counts[slice_index])
+
+print(max1, max2, air_t)
+
+initial_intensity = np.array([max1, max2]) / air_t
+print(initial_intensity)
+print(max1/max2)
+print(initial_intensity[0]/initial_intensity[1])
+
 # %% [markdown]
 # ## **Gadolinium oxysulfide (GOS)**
 
@@ -253,6 +306,19 @@ GOS_n_p_50 = spec_Mo_50_energies * qe
 # GOS_n_p_50 = np.ones(spec_Mo_50_energies.size)
 
 GOS_eff_50 = GOS_n_p_50 * (1 - GOS_t_50)
+
+fig, ax = plt.subplots(1, 3, figsize=(30, 5))
+ax[0].plot(spec_Mo_50_energies, GOS_n_p_50)
+ax[0].grid()
+ax[0].set_ylabel('Photons, count', fontsize=16)
+ax[1].plot(spec_Mo_50_energies, 1-GOS_t_50)
+ax[1].grid()
+ax[1].set_ylabel('Attenuation, a.u.', fontsize=16)
+ax[2].plot(spec_Mo_50_energies, GOS_eff_50)
+ax[2].grid()
+ax[2].set_ylabel('Photons, count', fontsize=16)
+ax[1].set_xlabel('Energy, keV', fontsize=16)
+plt.show()
 
 plt.plot(spec_Mo_50_energies, GOS_eff_50)
 plt.grid()
@@ -570,6 +636,18 @@ show_porous_profiles([im_SiC_0, recon_SiC_50_0], h_line_SiC)
 recon_SiC_50_0_eff, sinogram_50_0_eff = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_0_eff)
 
 # %%
+plt.imshow(sinogram_50_0_eff[:1].T, aspect=0.01)
+plt.tick_params(
+    axis='x',          # changes apply to the x-axis
+    which='both',      # both major and minor ticks are affected
+    bottom=False,      # ticks along the bottom edge are off
+    top=False,         # ticks along the top edge are off
+    labelbottom=False)
+plt.colorbar()
+plt.show()
+
+
+# %%
 plt.imshow(sinogram_50_0_eff, aspect='auto')
 plt.colorbar()
 plt.show()
@@ -585,6 +663,16 @@ plt.colorbar(im1, ax=ax[1])
 plt.show()
 
 show_porous_profiles([im_SiC_0, recon_SiC_50_0_eff], h_line_SiC)
+
+# %%
+plt.figure(figsize=(10, 5))
+plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент')
+plt.plot(recon_SiC_50_0_eff[h_line_SiC], label='Моделирование')
+plt.xlabel('voxels')
+plt.ylabel('Attenuation µ, 1/mm')
+plt.legend()
+plt.grid()
+plt.show()
 
 # %%
 recon_SiC_50_18, sinogram_50_18 = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18)
@@ -670,7 +758,7 @@ show_porous_profiles([im_SiC_18, recon_SiC_50_324_eff], h_line_SiC)
 # %% [markdown]
 # ## **Reconstruction with spectrum attenuation calculation and GOS**
 
-# %% jupyter={"source_hidden": true}
+# %%
 def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, mat_att, voxel_size, GOS_eff=None, h_line=None):
 
     angles = np.arange(0, 180, 1)
@@ -744,6 +832,20 @@ def calc_object_mus_from_spectrum(bin_im, exp_im, spectrum, mat_att, voxel_size,
 # %%
 _ = calc_object_mus_from_spectrum(bim_SiC, im_SiC_0, spec_Mo_50_0, att_SiC, voxel_size, GOS_eff_50, h_line_SiC)
 
+# %%
+en_step = np.mean(spec_Mo_50_energies[1:] - spec_Mo_50_energies[:-1])
+
+s = spekpy.Spek(kvp=50, dk=en_step, targ='Mo')
+s.filter('Air', 1440)
+energies, intensities = s.get_spectrum()
+intensities /= intensities.sum()
+
+plt.plot(energies, intensities)
+plt.plot(spec_Mo_50_energies, spec_Mo_50_0)
+plt.ylim([2e-5, 4e-1])
+plt.yscale('log')
+plt.grid()
+
 # %% [markdown]
 # ## **Iohexol samles**
 #
@@ -801,7 +903,7 @@ plt.show()
 # %% [markdown]
 # ## **Calc Iohexol water solution density**
 
-# %% jupyter={"source_hidden": true}
+# %%
 def calc_Ihx_solution(ihx_parts=1, wat_parts=1):
 
     # ihx_parts = 5 #4.17
@@ -1232,7 +1334,18 @@ plt.grid()
 plt.show()
 
 # %%
-_ = calc_object_mus_from_spectrum(bim_SiC, gaussian(im_SiC_0), spekpy_Mo_50, att_SiC_0, voxel_size, GOS_eff_50, h_line_SiC)
+_, recon_GOS = calc_object_mus_from_spectrum(bim_SiC, gaussian(im_SiC_0), spekpy_Mo_50, att_SiC_0, voxel_size, GOS_eff_50, h_line_SiC)
+
+# %%
+plt.figure(figsize=(10, 5))
+plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент', linewidth=0.5)
+plt.plot(recon_SiC_50_0_eff[h_line_SiC], label='Моделирование 1', linewidth=0.5)
+plt.plot(recon_GOS[h_line_SiC], label='Моделирование 2')
+plt.xlabel('voxels')
+plt.ylabel('Attenuation µ, 1/mm')
+plt.legend()
+plt.grid()
+plt.show()
 
 # %%
 en_step = np.mean(spec_Mo_50_energies[1:] - spec_Mo_50_energies[:-1])
