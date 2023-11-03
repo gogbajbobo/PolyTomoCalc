@@ -40,15 +40,52 @@ spec_df['nf_gauss_20'] = sp.ndimage.gaussian_filter(spec_df['nf_40x20'], sigma=s
 
 # spec_df = spec_df[27:566].reset_index().drop(labels='index', axis=1)
 spec_df = spec_df[65:].reset_index().drop(labels='index', axis=1)
-spec_df['nf_gauss_5'] /= spec_df['nf_gauss_5'].sum()
-spec_df['nf_gauss_10'] /= spec_df['nf_gauss_10'].sum()
-spec_df['nf_gauss_15'] /= spec_df['nf_gauss_15'].sum()
-spec_df['nf_gauss_20'] /= spec_df['nf_gauss_20'].sum()
+# spec_df['nf_gauss_5'] /= spec_df['nf_gauss_5'].sum()
+# spec_df['nf_gauss_10'] /= spec_df['nf_gauss_10'].sum()
+# spec_df['nf_gauss_15'] /= spec_df['nf_gauss_15'].sum()
+# spec_df['nf_gauss_20'] /= spec_df['nf_gauss_20'].sum()
 
 spec_df
 
 # %%
 spec_df.plot('keV', ['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15'], logy=True)
+
+# %%
+plt.plot(spec_df['keV'], spec_df['nf_gauss_5'], label='5 mA')
+plt.plot(spec_df['keV'], spec_df['nf_gauss_10'], label='10 mA')
+plt.plot(spec_df['keV'], spec_df['nf_gauss_15'], label='15 mA')
+# plt.ylim(1e-5, 0.1)
+# plt.xlim(0, 50)
+plt.yscale('log')
+plt.xlabel('Energy, keV')
+plt.ylabel('Photons, counts')
+plt.legend()
+plt.grid()
+plt.show()
+
+# %%
+plt.plot(spec_df['keV'], spec_df['nf_gauss_5']/spec_df['nf_gauss_5'].sum(), label='5 mA')
+plt.plot(spec_df['keV'], spec_df['nf_gauss_10']/spec_df['nf_gauss_10'].sum(), label='10 mA')
+plt.plot(spec_df['keV'], spec_df['nf_gauss_15']/spec_df['nf_gauss_15'].sum(), label='15 mA')
+# plt.ylim(1e-5, 0.1)
+# plt.xlim(0, 50)
+plt.yscale('log')
+plt.xlabel('Energy, keV')
+plt.ylabel('Intensity, a.u.')
+plt.legend()
+plt.grid()
+plt.show()
+
+# %%
+plt.plot(spec_df[150:250]['keV'], spec_df[150:250]['nf_gauss_5'], label='5 mA')
+plt.plot(spec_df[150:250]['keV'], spec_df[150:250]['nf_gauss_10'], label='10 mA')
+plt.plot(spec_df[150:250]['keV'], spec_df[150:250]['nf_gauss_15'], label='15 mA')
+# plt.ylim(1e-5, 0.1)
+# plt.xlim(0, 50)
+plt.yscale('log')
+plt.legend()
+plt.grid()
+plt.show()
 
 # %%
 spec_df[150:250].plot('keV', ['nf_gauss_5', 'nf_gauss_10', 'nf_gauss_15'], logy=True)
