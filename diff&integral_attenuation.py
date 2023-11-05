@@ -180,3 +180,39 @@ plt.show()
 
 
 # %%
+att_k_eff = np.append([np.inf], attenuation[1:] / length_ticks[1:])
+att_k_diff = np.append([np.inf], attenuation[1:] - attenuation[:-1])
+
+fig, ax = plt.subplots(2, 1, figsize=(5, 5))
+
+ax[0].plot(length_ticks, att_k_eff, c='green')
+ax[0].scatter(length_ticks[::10], att_k_eff[::10], marker='o', c='green')
+ax[0].grid()
+ax[0].tick_params(
+    axis='x',
+    which='both',
+    bottom=False,
+    top=False,
+    labelbottom=False)
+ax[0].set_ylabel(r'$µ_{eff}, mm^{-1}$')
+ax[0].set_ylim(0, 1.2)
+
+ax[1].plot(length_ticks, att_k_diff, c='red')
+ax[1].scatter(length_ticks[::10], att_k_diff[::10], marker='o', c='red')
+ax[1].set_ylabel(r'$\bar µ, mm^{-1}$')
+ax[1].set_xlabel('Толщина, мм')
+ax[1].set_ylim(0, 0.11)
+ax[1].grid()
+
+
+# %%
+plt.plot(spec_Mo_50_energies, att_SiC)
+plt.yscale('log')
+# plt.xscale('log')
+plt.grid()
+plt.show()
+
+# %%
+att_SiC[844]
+
+# %%
