@@ -18,6 +18,7 @@ import xraydb
 import spekpy
 import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
+from matplotlib import cm
 
 import numpy as np
 
@@ -147,19 +148,22 @@ recon_0 = calc_object_mus_from_spectrum(im1, spek_intensities_eff, att_SiC, voxe
 # %%
 im2 = np.zeros(shape).astype(int)
 rr, cc = disk((size//2, size//2), size//3, shape=shape)
+im2[rr, cc] = 2
+
+rr, cc = disk((size//3, size//2), size//24, shape=shape)
+# rr, cc = disk((size//3, size//2), size//12, shape=shape)
+# rr, cc = disk((size//4, size//2), size//6, shape=shape)
 im2[rr, cc] = 1
 
-# rr, cc = disk((size//3, size//2), size//16, shape=shape)
-rr, cc = disk((size//3, size//2), size//12, shape=shape)
-im2[rr, cc] = 2
-
-rr, cc = disk((2 * size//3, size//2), size//12, shape=shape)
-im2[rr, cc] = 2
+rr, cc = disk((2 * size//3, size//2), size//24, shape=shape)
+# rr, cc = disk((2 * size//3, size//2), size//12, shape=shape)
+# rr, cc = disk((3 * size//4, size//2), size//6, shape=shape)
+im2[rr, cc] = 1
 
 plt.imshow(im2)
 
 # %%
-attenuations = np.array([att_SiC, att_Fe])
+attenuations = np.array([att_Fe, att_SiC])
 # attenuations = np.array([att_SiC, att_SiC])
 attenuations.shape
 
@@ -198,7 +202,7 @@ def recon_multiple_matters(im, attenuations, spectrum, voxel_size):
 
 # %%
 recon_1 = recon_multiple_matters(im2, attenuations, spek_intensities_eff, voxel_size)
-recon_2 = recon_multiple_matters(im1, attenuations, spek_intensities_eff_Al_filter, voxel_size)
+recon_2 = recon_multiple_matters(im1, np.array([att_SiC, att_SiC]), spek_intensities_eff_Al_filter, voxel_size)
 recon_3 = recon_multiple_matters(im2, attenuations, spek_intensities_eff_Al_filter, voxel_size)
 
 # %%
@@ -246,8 +250,12 @@ plt.legend()
 plt.show()
 
 # %%
+im2[im2==1] = 0
+plt.imshow(im2)
+
+# %%
 # attenuations = np.array([att_SiC, att_Air])
-attenuations = np.array([att_SiC, np.zeros(att_SiC.shape)])
+attenuations = np.array([np.zeros(att_SiC.shape), att_SiC])
 recon_4 = recon_multiple_matters(im2, attenuations, spek_intensities_eff, voxel_size)
 
 # %%
@@ -292,7 +300,11 @@ plt.legend()
 plt.show()
 
 # %%
-recon_5 = recon_multiple_matters(im2, np.array([att_SiC, att_SiC]), spek_intensities_eff, voxel_size)
+im2[im2==1] = 0
+plt.imshow(im2)
+
+# %%
+recon_5 = recon_multiple_matters(im2, attenuations, spek_intensities_eff, voxel_size)
 recon_6 = recon_multiple_matters(im2, np.array([att_Air, att_Air]), spek_intensities_eff, voxel_size)
 
 # %%
@@ -309,6 +321,20 @@ plt.figure(figsize=(10, 5))
 plt.plot(recon_6[row])
 plt.ylabel('Коэффициент ослабления, 1/мм')
 plt.grid(color='gray')
+plt.show()
+
+# %%
+plt.imshow(recon_1)
+
+# %%
+fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+# ax.plot_surface(X, Y, Z, vmin=Z.min() * 2, cmap=cm.Blues)
+ax.plot_surface(np.arange(recon_1.shape[0]), np.arange(recon_1.shape[1]), recon_1, cmap=cm.Blues)
+
+# ax.set(xticklabels=[],
+#        yticklabels=[],
+#        zticklabels=[])
+
 plt.show()
 
 # %%
