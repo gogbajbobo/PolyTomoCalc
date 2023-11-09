@@ -1338,8 +1338,8 @@ _, recon_GOS = calc_object_mus_from_spectrum(bim_SiC, gaussian(im_SiC_0), spekpy
 
 # %%
 plt.figure(figsize=(10, 5))
-plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент', linewidth=0.5)
-plt.plot(recon_SiC_50_0_eff[h_line_SiC], label='Моделирование 1', linewidth=0.5)
+plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент', linewidth=1)
+plt.plot(recon_SiC_50_0_eff[h_line_SiC], label='Моделирование 1', linewidth=1)
 plt.plot(recon_GOS[h_line_SiC], label='Моделирование 2')
 plt.xlabel('voxels')
 plt.ylabel('Attenuation µ, 1/mm')
