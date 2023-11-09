@@ -230,7 +230,7 @@ s.filter('Air', 1440)
 energies, intensities = s.get_spectrum()
 intensities /= intensities.sum()
 
-plt.plot(Mo_spec_poly_50_energies, spec_Mo_50, label='Experiment', c='green')
+plt.plot(Mo_spec_poly_50_energies, spec_Mo_50, label='Experiment')
 plt.plot([], [])
 plt.plot(energies, intensities, label='Model')
 plt.ylim([2e-5, 4e-1])
