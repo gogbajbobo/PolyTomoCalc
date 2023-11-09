@@ -230,6 +230,7 @@ s.filter('Air', 1440)
 energies, intensities = s.get_spectrum()
 intensities /= intensities.sum()
 
+plt.figure(figsize=(10, 5))
 plt.plot(Mo_spec_poly_50_energies, spec_Mo_50, label='Experiment')
 plt.plot([], [])
 plt.plot(energies, intensities, label='Model')
