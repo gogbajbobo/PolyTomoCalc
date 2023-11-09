@@ -518,6 +518,7 @@ plt.show()
 
 plt.figure(figsize=(10, 5))
 plt.plot(gaussian(im, sigma=5)[610], label='Эксперимент')
+plt.plot([])
 plt.plot(m_im[610], label='Моделирование')
 plt.xlabel('voxels')
 plt.ylabel('Attenuation µ, 1/mm')
