@@ -19,6 +19,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc
 
+
 # %%
 input_path = 'Mo_spec_poly_50_energies.npy'
 with open(input_path, 'rb') as f:
@@ -71,7 +72,7 @@ def calc_slope(a, b, alpha, x):
 
 # %%
 voxel_size = 0.1 # in mm
-total_lenght = 10 # 1cm
+total_lenght = 11 # 1cm
 length_ticks = np.arange(0, total_lenght, voxel_size)
 
 transmissions_SiC_at_depths = np.exp(np.outer(-att_SiC, length_ticks)).T
@@ -105,6 +106,7 @@ plt.scatter(length_ticks[::10], attenuation[::10], marker='o')
 
 plt.xlabel('Толщина, мм', fontsize=14)
 plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=14)
+plt.xlim(-0.5, 10.5)
 plt.grid()
 
 
@@ -118,7 +120,7 @@ GOS_n_p_50 = spec_Mo_50_energies * qe
 GOS_eff_50 = GOS_n_p_50 * (1 - GOS_t_50)
 
 voxel_size = 0.1 # in mm
-total_lenght = 10 # 1cm
+total_lenght = 11 # 1cm
 length_ticks = np.arange(0, total_lenght, voxel_size)
 
 transmissions_SiC_at_depths = np.exp(np.outer(-att_SiC, length_ticks)).T
@@ -134,7 +136,7 @@ passed_spectrums_GOS = transmissions_SiC_at_depths * spec_Mo_GOS
 passed_intensity_GOS = np.sum(passed_spectrums_GOS, axis=1)
 attenuation_GOS = -np.log(passed_intensity_GOS)
 
-GOS_t_50_1 = np.exp(-GOS_mus_50 * 11 * 0.001)
+GOS_t_50_1 = np.exp(-GOS_mus_50 * 10 * 0.001)
 GOS_eff_50_1 = GOS_n_p_50 * (1 - GOS_t_50_1)
 
 spec_Mo_GOS_1 = spec_Mo_50_0 * GOS_eff_50_1
@@ -166,7 +168,7 @@ plt.scatter(length_ticks[::10], attenuation[::10], marker='o')
 plt.plot(length_ticks, attenuation_GOS, label='GadOx 22µm')
 plt.scatter(length_ticks[::10], attenuation_GOS[::10], marker='o')
 
-plt.plot(length_ticks, attenuation_GOS_1, label='GadOx 11µm')
+plt.plot(length_ticks, attenuation_GOS_1, label='GadOx 10µm')
 plt.scatter(length_ticks[::10], attenuation_GOS_1[::10], marker='o')
 
 plt.plot(length_ticks, attenuation_CsI, label='CsI 150µm')
@@ -174,6 +176,7 @@ plt.scatter(length_ticks[::10], attenuation_CsI[::10], marker='o')
 
 plt.xlabel('Толщина, мм', fontsize=14)
 plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=14)
+plt.xlim(-0.5, 10.5)
 plt.grid()
 plt.legend()
 plt.show()
@@ -181,7 +184,7 @@ plt.show()
 
 # %%
 att_k_eff = np.append([np.inf], attenuation[1:] / length_ticks[1:])
-att_k_diff = np.append([np.inf], attenuation[1:] - attenuation[:-1])
+att_k_diff = np.append([np.inf], attenuation[1:] - attenuation[:-1]) / voxel_size
 
 fig, ax = plt.subplots(2, 1, figsize=(5, 5))
 
@@ -195,15 +198,31 @@ ax[0].tick_params(
     top=False,
     labelbottom=False)
 ax[0].set_ylabel(r'$µ_{eff}, mm^{-1}$')
+ax[0].set_xlim(-0.5, 10.5)
 ax[0].set_ylim(0, 1.2)
 
 ax[1].plot(length_ticks, att_k_diff, c='red')
 ax[1].scatter(length_ticks[::10], att_k_diff[::10], marker='o', c='red')
 ax[1].set_ylabel(r'$\bar µ, mm^{-1}$')
 ax[1].set_xlabel('Толщина, мм')
-ax[1].set_ylim(0, 0.11)
+ax[1].set_xlim(-0.5, 10.5)
+ax[1].set_ylim(0, 1.1)
 ax[1].grid()
 
+plt.show()
+
+plt.plot(length_ticks, att_k_eff, c='green', label=r'$µ_{eff}$')
+plt.scatter(length_ticks[::10], att_k_eff[::10], marker='o', c='green')
+plt.plot(length_ticks, att_k_diff, c='red', label=r'$\bar µ$')
+plt.scatter(length_ticks[::10], att_k_diff[::10], marker='o', c='red')
+plt.axline((0, att_SiC[844]), slope=0, c='darkviolet', label=r'$µ_{SiC} @ 50 KeV$')
+plt.xlim(-0.5, 10.5)
+plt.ylim(0, 1.1)
+plt.ylabel(r'$mm^{-1}$')
+plt.xlabel('Толщина, мм')
+plt.legend()
+plt.grid()
+plt.show()
 
 # %%
 plt.plot(spec_Mo_50_energies, att_SiC)
@@ -213,6 +232,6 @@ plt.grid()
 plt.show()
 
 # %%
-att_SiC[844]
+print(spec_Mo_50_energies[844])
 
-# %%
+print(att_SiC[844])
