@@ -506,6 +506,9 @@ plt.legend()
 plt.show()
 
 # %%
+m_im_0 = np.copy(m_im)
+
+# %%
 voxel_size = 0.0009 # in cm — 0.001 = 10µm
 
 # wo_GOS, w_GOS, diff_GOS = calc_object_mus_from_spectrum(bim, gaussian(im), spectrum_filtered, en_keV*1000, iohexol_mu*10, voxel_size)
@@ -518,8 +521,8 @@ plt.show()
 
 plt.figure(figsize=(10, 5))
 plt.plot(gaussian(im, sigma=5)[610], label='Эксперимент')
-plt.plot([])
-plt.plot(m_im[610], label='Моделирование')
+plt.plot(m_im_0[610], label='Моделирование 1')
+plt.plot(m_im[610], label='Моделирование 2')
 plt.xlabel('voxels')
 plt.ylabel('Attenuation µ, 1/mm')
 plt.grid()
