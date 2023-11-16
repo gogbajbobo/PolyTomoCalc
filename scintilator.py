@@ -158,3 +158,26 @@ plt.show()
 
 
 # %%
+en_keV = np.arange(140) + 1
+en_keV
+
+# %%
+xraydb.add_material('GOS', 'Gd2O2S', 7.34)
+GOS_mus = xraydb.material_mu('GOS', en_keV*1000) / 10
+GOS_t_140 = np.exp(-GOS_mus * 140 * 0.001)
+GOS_t_210 = np.exp(-GOS_mus * 210 * 0.001)
+
+qe = 60 # photon/keV
+GOS_n_p = en_keV * qe
+
+GOS_eff_140 = GOS_n_p * (1 - GOS_t_140)
+GOS_eff_210 = GOS_n_p * (1 - GOS_t_210)
+
+plt.plot(en_keV, GOS_eff_140, label='140µm')
+plt.plot(en_keV, GOS_eff_210, label='210µm')
+plt.grid()
+plt.legend()
+
+plt.show()
+
+# %%
