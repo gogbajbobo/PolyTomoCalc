@@ -18,6 +18,8 @@ import xraydb
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc
+import spekpy
+
 
 
 # %%
@@ -181,6 +183,12 @@ plt.grid()
 plt.legend()
 plt.show()
 
+plt.plot(spec_Mo_50_energies, GOS_eff_50)
+plt.xlabel('Энергия, кэВ', fontsize=14)
+plt.ylabel('Число фотонов', fontsize=14)
+plt.xlim(0, 50)
+plt.grid()
+
 
 # %%
 att_k_eff = np.append([np.inf], attenuation[1:] / length_ticks[1:])
@@ -235,3 +243,73 @@ plt.show()
 print(spec_Mo_50_energies[844])
 
 print(att_SiC[844])
+
+# %%
+default_blue_color = u'#1f77b4'
+
+voxel_size = 0.1 # in mm
+total_lenght = 11 # 1cm
+length_ticks = np.arange(0, total_lenght, voxel_size)
+
+transmissions_SiC_at_depths = np.exp(np.outer(-att_SiC, length_ticks)).T
+
+passed_spectrums_50_0 = transmissions_SiC_at_depths * spec_Mo_50_0
+passed_intensity = np.sum(passed_spectrums_50_0, axis=1)
+attenuation = -np.log(passed_intensity)
+
+en_step = np.mean(spec_Mo_50_energies[1:] - spec_Mo_50_energies[:-1])
+
+s = spekpy.Spek(kvp=50, dk=en_step, targ='Mo')
+s.filter('Air', 1440)
+model_energies, model_intensities = s.get_spectrum()
+model_intensities /= model_intensities.sum()
+model_att_SiC = xraydb.material_mu('SiC', model_energies * 1000) / 10
+model_transmissions_SiC_at_depths = np.exp(np.outer(-model_att_SiC, length_ticks)).T
+
+model_passed_spectrums_50_0 = model_transmissions_SiC_at_depths * model_intensities
+model_passed_intensity = np.sum(model_passed_spectrums_50_0, axis=1)
+model_attenuation = -np.log(model_passed_intensity)
+
+plt.plot(length_ticks, attenuation, label='Экспериментальный спектр')
+plt.scatter(length_ticks[::10], attenuation[::10], marker='o')
+
+plt.plot(length_ticks, model_attenuation, linestyle=(0, (2, 1)), c=default_blue_color, label='Расчётный спектр')
+plt.scatter(length_ticks[::10], model_attenuation[::10], facecolors='none', edgecolors=default_blue_color)
+
+plt.xlabel('Толщина, мм', fontsize=14)
+plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=14)
+plt.xlim(-0.5, 10.5)
+plt.grid()
+plt.legend()
+
+
+# %%
+plt.plot(model_energies, model_intensities)
+plt.plot(spec_Mo_50_energies, spec_Mo_50_0)
+plt.yscale('log')
+plt.ylim(1e-5, 1)
+
+# %%
+with open('SiC_lengths.npy', 'rb') as f:
+    SiC_lengths = np.load(f)
+
+with open('SiC_att_0.npy', 'rb') as f:
+    SiC_att_0 = np.load(f)
+
+# %%
+plt.scatter(SiC_lengths, SiC_att_0, s=1, marker='.', c='gray', label='Экспериментальные данные')
+
+plt.plot(length_ticks, attenuation, label='Моделирование: Экспериментальный спектр')
+plt.scatter(length_ticks[::10], attenuation[::10], marker='o')
+
+plt.plot(length_ticks, model_attenuation, linestyle=(0, (2, 1)), c=default_blue_color, label='Моделирование: Расчётный спектр')
+plt.scatter(length_ticks[::10], model_attenuation[::10], facecolors='none', edgecolors=default_blue_color)
+
+plt.xlabel('Толщина, мм', fontsize=14)
+plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=14)
+plt.xlim(-0.5, 7.5)
+plt.grid()
+plt.legend()
+
+
+# %%

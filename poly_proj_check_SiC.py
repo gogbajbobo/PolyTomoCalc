@@ -137,6 +137,7 @@ with open(input_path, 'rb') as f:
 
 # %%
 plt.imshow(im_SiC_0)
+plt.colorbar()
 
 im_SiC_0.shape
 
@@ -173,6 +174,7 @@ SiC_att_0 = SiC_att_0[x_min:x_max]
 SiC_att_1 = SiC_att_1[x_min:x_max]
 
 plt.plot(SiC_att_0)
+# plt.plot(SiC_att_1)
 plt.plot(SiC_lengths)
 plt.yscale('log')
 plt.show()
@@ -267,7 +269,7 @@ plt.grid()
 plt.show()
 
 # %%
-print('test')
-print('test')
+np.save('SiC_lengths', SiC_lengths)
+np.save('SiC_att_0', SiC_att_0)
 
 # %%

@@ -675,6 +675,37 @@ plt.grid()
 plt.show()
 
 # %%
+fig, ax = plt.subplots(1, 3, figsize=(15, 5), width_ratios=[1, 0.8, 1])
+
+im0 = ax[0].imshow(im_SiC_0)
+ax[0].axhline(im_SiC_0.shape[0] // 2, linewidth=4, c='white', alpha=0.5)
+plt.colorbar(im0, ax=ax[0])
+ax[0].set_title('а', fontsize=24)
+
+ax[1].imshow(bim_SiC)
+# plt.colorbar(im1, ax=ax[1])
+ax[1].set_title('б', fontsize=24)
+
+im2 = ax[2].imshow(recon_SiC_50_0_eff)
+plt.colorbar(im2, ax=ax[2])
+ax[2].set_title('в', fontsize=24)
+
+plt.show()
+
+
+# %%
+default_blue_color = u'#1f77b4'
+
+plt.figure(figsize=(10, 5))
+plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент', c='black', linewidth=0.5)
+plt.plot(recon_SiC_50_0_eff[h_line_SiC], label='Моделирование', c=default_blue_color, linewidth=0.75, linestyle=(0, (7.5, 5)))
+plt.xlabel('воксели')
+plt.ylabel('Коэффициент ослабления µ, 1/мм')
+plt.legend()
+plt.grid()
+plt.show()
+
+# %%
 recon_SiC_50_18, sinogram_50_18 = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18)
 
 # %%
@@ -1343,6 +1374,28 @@ plt.plot(recon_SiC_50_0_eff[h_line_SiC], label='Моделирование 1', l
 plt.plot(recon_GOS[h_line_SiC], label='Моделирование 2', linewidth=0.5)
 plt.xlabel('voxels')
 plt.ylabel('Attenuation µ, 1/mm')
+plt.legend()
+plt.grid()
+plt.show()
+
+# %%
+default_blue_color = u'#1f77b4'
+
+# plt.figure(figsize=(10, 5))
+# plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент', c='black', linewidth=0.5)
+# plt.plot(recon_SiC_50_0_eff[h_line_SiC], label='Моделирование', c=default_blue_color, linewidth=0.75, linestyle=(0, (7.5, 5)))
+# plt.xlabel('воксели')
+# plt.ylabel('Коэффициент ослабления µ, 1/мм')
+# plt.legend()
+# plt.grid()
+# plt.show()
+
+plt.figure(figsize=(10, 5))
+plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент', c='black', linewidth=0.5)
+# plt.plot(recon_SiC_50_0_eff[h_line_SiC], label='Моделирование 1')
+plt.plot(recon_GOS[h_line_SiC], label='Моделирование 2', c=default_blue_color, linewidth=0.75, linestyle=(0, (7.5, 5)))
+plt.xlabel('воксели')
+plt.ylabel('Коэффициент ослабления µ, 1/мм')
 plt.legend()
 plt.grid()
 plt.show()
