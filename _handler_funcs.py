@@ -69,3 +69,4 @@ def extract_spectrum_data(file_name):
                 find_data =True
 
         return np.array(res).astype(int)
+
