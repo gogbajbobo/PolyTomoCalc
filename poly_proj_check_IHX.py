@@ -21,6 +21,7 @@ from skimage.filters import threshold_otsu, gaussian, median
 import xraydb
 import spekpy
 
+import skimage
 
 # %%
 input_path = '/Users/grimax/Documents/Science/xtomo/poly_tomo_calc/Iohexol_samples/cd130f11-38b7-4de8-ad96-85f30f8a6105.npy'
@@ -54,8 +55,19 @@ bim = im2show > 0.15
 plt.imshow(bim)
 
 # %%
+radius = 10
+shape = (radius * 2, radius * 2)
+img = np.zeros(shape, dtype=np.uint8)
+rr, cc = skimage.draw.disk((radius, radius), radius, shape=shape)
+img[rr, cc] = 1
+
+bim_erroded = skimage.morphology.binary_erosion(bim, footprint=img)
+plt.imshow(bim_erroded)
+
+
+# %%
 ihx_im = ihx_1_1.copy()
-ihx_im[~bim] = 0
+ihx_im[~bim_erroded] = 0
 ihx_im[ihx_im < 0] = 0
 
 plt.imshow(ihx_im)
@@ -67,7 +79,7 @@ voxel_size = 0.009 # in mm — 0.01 = 10µm
 # SiC_lengths = np.sum(np.fliplr(bim_SiC), axis=0) * voxel_size
 # SiC_att_0 = np.sum(np.fliplr(im_SiC_0), axis=0) * voxel_size
 
-ihx_lengths = np.sum(bim, axis=0) * voxel_size
+ihx_lengths = np.sum(bim_erroded, axis=0) * voxel_size
 ihx_att = np.sum(ihx_im, axis=0) * voxel_size
 
 plt.scatter(ihx_lengths, ihx_att, marker='.', s=1, c='gray')
@@ -190,6 +202,7 @@ plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=14)
 plt.xlim(-0.5, 9.2)
 plt.grid()
 plt.legend()
+plt.title(r'Йогексол, $C_{19}H_{26}I_3N_3O_9$')
 
 
 # %%
