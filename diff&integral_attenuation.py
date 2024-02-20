@@ -310,6 +310,7 @@ plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=14)
 plt.xlim(-0.5, 7.5)
 plt.grid()
 plt.legend()
+plt.title('Карбид кремния, SiC')
 
 
 # %%
