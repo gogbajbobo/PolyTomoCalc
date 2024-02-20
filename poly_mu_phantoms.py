@@ -227,13 +227,14 @@ plt.show()
 
 
 # %%
-fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
 im_0 = ax[0].imshow(recon_0)
 plt.colorbar(im_0, ax=ax[0])
 ax[0].axhline(recon_0.shape[0]//2, linewidth=4, c='white', alpha=0.5)
 im_1 = ax[1].imshow(recon_1)
 plt.colorbar(im_1, ax=ax[1])
 ax[1].axhline(recon_0.shape[0]//2, linewidth=4, c='white', alpha=0.5)
+plt.suptitle('а', fontsize=18)
 plt.show()
 
 # plt.imshow(recon_1)
@@ -244,9 +245,11 @@ row = im1.shape[0] // 2
 plt.figure(figsize=(10, 5))
 plt.plot(recon_0[row], label='SiC')
 plt.plot(recon_1[row], label='SiC + Fe')
+plt.xlabel('воксели')
 plt.ylabel('Коэффициент ослабления, 1/мм')
 plt.grid(color='gray')
 plt.legend()
+plt.suptitle('б', fontsize=18)
 plt.show()
 
 # %%
