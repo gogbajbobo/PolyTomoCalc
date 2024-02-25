@@ -88,6 +88,15 @@ plt.grid()
 # %%
 # see spec_edit.ipynb to load, handle and save spectrum
 
+input_path = 'Mo_spec_poly_45_0.npy'
+with open(input_path, 'rb') as f:
+    spec_Mo_45_0 = np.load(f).astype(float)
+    spec_Mo_45_0 /= spec_Mo_45_0.sum()
+
+input_path = 'Mo_spec_poly_45_energies_0.npy'
+with open(input_path, 'rb') as f:
+    spec_Mo_45_energies_0 = np.load(f).astype(float)
+
 input_path = 'Mo_spec_poly_45.npy'
 with open(input_path, 'rb') as f:
     spec_Mo_45 = np.load(f).astype(float)
@@ -100,6 +109,7 @@ with open(input_path, 'rb') as f:
 # en_step = (19.608 - 17.479) / (416 - 371)
 # spec_Mo_45_energies = np.array([17.479 + (i - 371) * en_step for i in np.arange(spec_Mo_45.shape[0])])
 
+plt.plot(spec_Mo_45_energies_0, spec_Mo_45_0)
 plt.plot(spec_Mo_45_energies, spec_Mo_45)
 plt.yscale('log')
 plt.grid()
@@ -109,12 +119,19 @@ plt.show()
 en_step = np.mean(spec_Mo_45_energies[1:] - spec_Mo_45_energies[:-1])
 
 s = spekpy.Spek(kvp=45, dk=en_step, targ='Mo')
+s.filter('Air', 140)
+model_energies_0, model_intensities_0 = s.get_spectrum()
+model_intensities_0 /= model_intensities_0.sum()
+
+s = spekpy.Spek(kvp=45, dk=en_step, targ='Mo')
 s.filter('Air', 1440)
 model_energies, model_intensities = s.get_spectrum()
 model_intensities /= model_intensities.sum()
 
 plt.plot(model_energies, model_intensities)
+plt.plot(model_energies_0, model_intensities_0)
 plt.plot(spec_Mo_45_energies, spec_Mo_45)
+plt.plot(spec_Mo_45_energies_0, spec_Mo_45_0)
 plt.yscale('log')
 plt.ylim(1e-5, 1)
 plt.grid()
@@ -179,11 +196,19 @@ length_ticks = np.arange(0, total_lenght, voxel_size)
 
 transmissions_IHX_at_depths = np.exp(np.outer(-iohexol_mu, length_ticks)).T
 
+passed_spectrums_45_0 = transmissions_IHX_at_depths * spec_Mo_45_0
+passed_intensity_0 = np.sum(passed_spectrums_45_0, axis=1)
+attenuation_0 = -np.log(passed_intensity_0)
+
 passed_spectrums_45 = transmissions_IHX_at_depths * spec_Mo_45
 passed_intensity = np.sum(passed_spectrums_45, axis=1)
 attenuation = -np.log(passed_intensity)
 
 model_transmissions_IHX_at_depths = np.exp(np.outer(-iohexol_mu_2, length_ticks)).T
+
+model_passed_spectrums_45_0 = model_transmissions_IHX_at_depths * model_intensities_0
+model_passed_intensity_0 = np.sum(model_passed_spectrums_45_0, axis=1)
+model_attenuation_0 = -np.log(model_passed_intensity_0)
 
 model_passed_spectrums_45 = model_transmissions_IHX_at_depths * model_intensities
 model_passed_intensity = np.sum(model_passed_spectrums_45, axis=1)
@@ -191,8 +216,12 @@ model_attenuation = -np.log(model_passed_intensity)
 
 plt.scatter(ihx_lengths, ihx_att, marker='.', s=1, c='gray', label='Экспериментальные данные')
 
+plt.plot(length_ticks, attenuation_0, label='Моделирование: Экспериментальный спектр 0')
+
 plt.plot(length_ticks, attenuation, label='Моделирование: Экспериментальный спектр')
 plt.scatter(length_ticks[::10], attenuation[::10], marker='o')
+
+plt.plot(length_ticks, model_attenuation_0, label='Моделирование: Расчётный спектр 0')
 
 plt.plot(length_ticks, model_attenuation, linestyle=(0, (2, 1)), c=default_blue_color, label='Моделирование: Расчётный спектр')
 plt.scatter(length_ticks[::10], model_attenuation[::10], facecolors='none', edgecolors=default_blue_color)
