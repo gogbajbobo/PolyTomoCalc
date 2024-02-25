@@ -260,6 +260,18 @@ attenuation = -np.log(passed_intensity)
 en_step = np.mean(spec_Mo_50_energies[1:] - spec_Mo_50_energies[:-1])
 
 s = spekpy.Spek(kvp=50, dk=en_step, targ='Mo')
+s.filter('Air', 140)
+
+model_energies_0, model_intensities_0 = s.get_spectrum()
+model_intensities_0 /= model_intensities_0.sum()
+model_att_SiC_0 = xraydb.material_mu('SiC', model_energies_0 * 1000) / 10
+model_transmissions_SiC_at_depths_0 = np.exp(np.outer(-model_att_SiC_0, length_ticks)).T
+
+model_passed_spectrums_50_0_0 = model_transmissions_SiC_at_depths_0 * model_intensities_0
+model_passed_intensity_0 = np.sum(model_passed_spectrums_50_0_0, axis=1)
+model_attenuation_0 = -np.log(model_passed_intensity_0)
+
+s = spekpy.Spek(kvp=50, dk=en_step, targ='Mo')
 s.filter('Air', 1440)
 model_energies, model_intensities = s.get_spectrum()
 model_intensities /= model_intensities.sum()
@@ -273,6 +285,8 @@ model_attenuation = -np.log(model_passed_intensity)
 plt.plot(length_ticks, attenuation, label='Экспериментальный спектр')
 plt.scatter(length_ticks[::10], attenuation[::10], marker='o')
 
+plt.plot(length_ticks, model_attenuation_0, label='Расчётный спектр 0')
+
 plt.plot(length_ticks, model_attenuation, linestyle=(0, (2, 1)), c=default_blue_color, label='Расчётный спектр')
 plt.scatter(length_ticks[::10], model_attenuation[::10], facecolors='none', edgecolors=default_blue_color)
 
@@ -285,6 +299,7 @@ plt.legend()
 
 # %%
 plt.plot(model_energies, model_intensities)
+plt.plot(model_energies_0, model_intensities_0)
 plt.plot(spec_Mo_50_energies, spec_Mo_50_0)
 plt.yscale('log')
 plt.ylim(1e-5, 1)
@@ -301,6 +316,8 @@ plt.scatter(SiC_lengths, SiC_att_0, s=1, marker='.', c='gray', label='Экспе
 
 plt.plot(length_ticks, attenuation, label='Моделирование: Экспериментальный спектр')
 plt.scatter(length_ticks[::10], attenuation[::10], marker='o')
+
+plt.plot(length_ticks, model_attenuation_0, label='Расчётный спектр 0')
 
 plt.plot(length_ticks, model_attenuation, linestyle=(0, (2, 1)), c=default_blue_color, label='Моделирование: Расчётный спектр')
 plt.scatter(length_ticks[::10], model_attenuation[::10], facecolors='none', edgecolors=default_blue_color)
