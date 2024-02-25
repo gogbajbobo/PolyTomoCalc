@@ -52,6 +52,14 @@ plt.yscale('log')
 plt.grid()
 
 # %%
+en_keV = en_keV[2:] # rm less than zero energies
+spectrum = spectrum[2:]
+
+# %%
+np.save('Mo_spec_poly_45_0', spectrum)
+np.save('Mo_spec_poly_45_energies_0', en_keV)
+
+# %%
 att_air = np.exp(-xraydb.material_mu('air', en_keV*1000) * 144)
 # plt.plot(en_keV, att_air)
 # plt.yscale('log')
@@ -151,9 +159,6 @@ plt.grid()
 plt.yscale('log')
 
 # %%
-en_keV = en_keV[2:] # rm less than zero energies
-sf_edit = sf_edit[2:]
-
 sf_edit /= sf_edit.sum()
 
 plt.plot(en_keV, sf_edit)
