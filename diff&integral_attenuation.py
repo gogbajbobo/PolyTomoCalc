@@ -260,7 +260,8 @@ attenuation = -np.log(passed_intensity)
 en_step = np.mean(spec_Mo_50_energies[1:] - spec_Mo_50_energies[:-1])
 
 s = spekpy.Spek(kvp=50, dk=en_step, targ='Mo')
-s.filter('Air', 140)
+# s.filter('Air', 140)
+s.filter('Air', 250)
 
 model_energies_0, model_intensities_0 = s.get_spectrum()
 model_intensities_0 /= model_intensities_0.sum()
