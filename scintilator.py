@@ -33,17 +33,20 @@ GOS_t2 = np.exp(-GOS_mus * 44 * 0.001)
 GOS_t3 = np.exp(-GOS_mus * 88 * 0.001)
 GOS_t4 = np.exp(-GOS_mus * 176 * 0.001)
 GOS_t5 = np.exp(-GOS_mus * 11 * 0.001)
+GOS_t5_1 = np.exp(-GOS_mus * 10 * 0.001)
 GOS_t6 = np.exp(-GOS_mus * 5.5 * 0.001)
 
-beta = 3
-en_gap = 4.6 # eV
-GOS_n_p = en_keV*1000 / (beta * en_gap)
+# beta = 3
+# en_gap = 4.6 # eV
+# GOS_n_p = en_keV*1000 / (beta * en_gap)
+GOS_n_p = 60 * en_keV
 
 GOS_eff = GOS_n_p * (1 - GOS_t)
 GOS_eff2 = GOS_n_p * (1 - GOS_t2)
 GOS_eff3 = GOS_n_p * (1 - GOS_t3)
 GOS_eff4 = GOS_n_p * (1 - GOS_t4)
 GOS_eff5 = GOS_n_p * (1 - GOS_t5)
+GOS_eff5_1 = GOS_n_p * (1 - GOS_t5)
 GOS_eff6 = GOS_n_p * (1 - GOS_t6)
 
 fig, ax = plt.subplots(1, 2, figsize=(14, 7))
@@ -179,5 +182,14 @@ plt.grid()
 plt.legend()
 
 plt.show()
+
+# %%
+plt.plot(en_keV, GOS_eff5_1, label='Gd2O2S 10µm')
+plt.plot(en_keV, GOS_eff, label='Gd2O2S 22µm')
+plt.plot(en_keV, CsI_eff4, label='CsI 150µm')
+plt.axhline(100, label='Virtual "flat" detector')
+plt.xlim(0, 50)
+plt.grid()
+plt.legend()
 
 # %%
