@@ -183,10 +183,15 @@ plt.grid()
 plt.legend()
 plt.show()
 
-plt.plot(spec_Mo_50_energies, GOS_eff_50)
+# plt.axhline(100)
+plt.plot([spec_Mo_50_energies[0], 50], [700, 700], label='flat')
+plt.plot(spec_Mo_50_energies, GOS_eff_50, label='GadOx 22µm')
+plt.plot(spec_Mo_50_energies, GOS_eff_50_1, label='GadOx 10µm')
+plt.plot(spec_Mo_50_energies, CsI_eff, label='CsI 150µm')
 plt.xlabel('Энергия, кэВ', fontsize=14)
 plt.ylabel('Число фотонов', fontsize=14)
 plt.xlim(0, 50)
+plt.legend()
 plt.grid()
 
 
