@@ -98,8 +98,9 @@ plt.ylim(3e-5, 0.1)
 plt.yscale('log')
 plt.xlabel('Энергия, кэВ')
 plt.ylabel('Интенсивность, у.е.')
-plt.legend()
+plt.legend(framealpha=1)
 plt.grid()
+# plt.savefig('Fig8.eps', dpi=600)
 plt.show()
 
 # %%

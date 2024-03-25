@@ -110,6 +110,7 @@ plt.xlabel('Толщина, мм', fontsize=14)
 plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=14)
 plt.xlim(-0.5, 10.5)
 plt.grid()
+# plt.savefig('Fig3a.eps', dpi=600)
 
 
 # %%
@@ -180,7 +181,8 @@ plt.xlabel('Толщина, мм', fontsize=14)
 plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=14)
 plt.xlim(-0.5, 10.5)
 plt.grid()
-plt.legend()
+plt.legend(framealpha=1)
+# plt.savefig('Fig5b.eps', dpi=600)
 plt.show()
 
 # plt.axhline(100)
@@ -191,8 +193,9 @@ plt.plot(spec_Mo_50_energies, CsI_eff, label='CsI 150µm')
 plt.xlabel('Энергия, кэВ', fontsize=14)
 plt.ylabel('Число фотонов', fontsize=14)
 plt.xlim(0, 50)
-plt.legend()
+plt.legend(framealpha=1)
 plt.grid()
+# plt.savefig('Fig5a.eps', dpi=600)
 
 
 # %%
@@ -233,8 +236,9 @@ plt.xlim(-0.5, 10.5)
 plt.ylim(0, 1.1)
 plt.ylabel(r'$mm^{-1}$')
 plt.xlabel('Толщина, мм')
-plt.legend()
+plt.legend(framealpha=1)
 plt.grid()
+# plt.savefig('Fig3b.eps', dpi=600)
 plt.show()
 
 # %%
@@ -332,8 +336,9 @@ plt.xlabel('Толщина, мм', fontsize=14)
 plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=14)
 plt.xlim(-0.5, 7.5)
 plt.grid()
-plt.legend()
+plt.legend(framealpha=1)
 plt.title('Карбид кремния, SiC')
+# plt.savefig('Fig9a.eps', dpi=600)
 
 
 # %%

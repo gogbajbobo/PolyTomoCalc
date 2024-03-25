@@ -258,8 +258,9 @@ plt.ylim([2e-5, 4e-1])
 plt.yscale('log')
 plt.xlabel('Энергия, кэВ')
 plt.ylabel('Интенсивность, у.е.')
-plt.legend()
+plt.legend(framealpha=1)
 plt.grid()
+# plt.savefig('Fig4a.eps', dpi=600)
 
 # %%
 en_slice = slice(250, 300)

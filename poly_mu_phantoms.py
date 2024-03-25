@@ -235,6 +235,7 @@ im_1 = ax[1].imshow(recon_1)
 plt.colorbar(im_1, ax=ax[1])
 ax[1].axhline(recon_0.shape[0]//2, linewidth=4, c='white', alpha=0.5)
 plt.suptitle('а', fontsize=18)
+# plt.savefig('Fig11a.eps', dpi=600)
 plt.show()
 
 # plt.imshow(recon_1)
@@ -248,8 +249,9 @@ plt.plot(recon_1[row], label='SiC + Fe')
 plt.xlabel('воксели')
 plt.ylabel('Коэффициент ослабления, 1/мм')
 plt.grid(color='gray')
-plt.legend()
+plt.legend(framealpha=1)
 plt.suptitle('б', fontsize=18)
+# plt.savefig('Fig11b.eps', dpi=600)
 plt.show()
 
 # %%

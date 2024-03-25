@@ -266,6 +266,7 @@ im2 = ax[2].imshow(m_im)
 plt.colorbar(im2, ax=ax[2])
 ax[2].set_title('в', fontsize=24)
 
+# plt.savefig('Fig7abc.eps', dpi=600)
 plt.show()
 
 # %%
@@ -282,8 +283,9 @@ plt.xlabel('воксели')
 plt.ylabel('Коэффициент ослабления, 1/мм')
 
 plt.grid()
-plt.legend()
+plt.legend(framealpha=1)
 
+# plt.savefig('Fig7d.eps', dpi=600)
 plt.show()
 
 # %%
@@ -313,8 +315,9 @@ plt.xlabel('воксели')
 plt.ylabel('Коэффициент ослабления, 1/мм')
 
 plt.grid()
-plt.legend()
+plt.legend(framealpha=1)
 
+# plt.savefig('Fig10b.eps', dpi=600)
 plt.show()
 
 # %%
