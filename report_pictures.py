@@ -690,6 +690,8 @@ im2 = ax[2].imshow(recon_SiC_50_0_eff)
 plt.colorbar(im2, ax=ax[2])
 ax[2].set_title('в', fontsize=24)
 
+# plt.savefig('Fig6abc.eps', dpi=600)
+
 plt.show()
 
 
@@ -701,8 +703,9 @@ plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент', c='black', linewi
 plt.plot(recon_SiC_50_0_eff[h_line_SiC], label='Моделирование', c=default_blue_color, linewidth=0.75, linestyle=(0, (7.5, 5)))
 plt.xlabel('воксели')
 plt.ylabel('Коэффициент ослабления µ, 1/мм')
-plt.legend()
+plt.legend(framealpha=1)
 plt.grid()
+# plt.savefig('Fig6d.eps', dpi=600)
 plt.show()
 
 # %%
@@ -1396,8 +1399,9 @@ plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент', c='black', linewi
 plt.plot(recon_GOS[h_line_SiC], label='Моделирование 2', c=default_blue_color, linewidth=0.75, linestyle=(0, (7.5, 5)))
 plt.xlabel('воксели')
 plt.ylabel('Коэффициент ослабления µ, 1/мм')
-plt.legend()
+plt.legend(framealpha=1)
 plt.grid()
+# plt.savefig('Fig10a.eps', dpi=600)
 plt.show()
 
 # %%

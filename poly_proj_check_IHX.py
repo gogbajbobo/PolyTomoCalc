@@ -216,12 +216,12 @@ model_attenuation = -np.log(model_passed_intensity)
 
 plt.scatter(ihx_lengths, ihx_att, marker='.', s=1, c='gray', label='Экспериментальные данные')
 
-plt.plot(length_ticks, attenuation_0, label='Моделирование: Экспериментальный спектр 0')
+# plt.plot(length_ticks, attenuation_0, label='Моделирование: Экспериментальный спектр 0')
 
 plt.plot(length_ticks, attenuation, label='Моделирование: Экспериментальный спектр')
 plt.scatter(length_ticks[::10], attenuation[::10], marker='o')
 
-plt.plot(length_ticks, model_attenuation_0, label='Моделирование: Расчётный спектр 0')
+# plt.plot(length_ticks, model_attenuation_0, label='Моделирование: Расчётный спектр 0')
 
 plt.plot(length_ticks, model_attenuation, linestyle=(0, (2, 1)), c=default_blue_color, label='Моделирование: Расчётный спектр')
 plt.scatter(length_ticks[::10], model_attenuation[::10], facecolors='none', edgecolors=default_blue_color)
@@ -230,8 +230,10 @@ plt.xlabel('Толщина, мм', fontsize=14)
 plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=14)
 plt.xlim(-0.5, 9.2)
 plt.grid()
-plt.legend()
+plt.legend(framealpha=1)
 plt.title(r'Йогексол, $C_{19}H_{26}I_3N_3O_9$')
+# plt.savefig('Fig9b.eps', dpi=600)
+plt.show()
 
 
 # %%
