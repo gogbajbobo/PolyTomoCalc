@@ -6,3 +6,4 @@
 spekpy/
 spekpy.egg-info/
 setup.py
+/tmp
