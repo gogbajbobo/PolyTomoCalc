@@ -114,6 +114,36 @@ plt.grid()
 
 
 # %%
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot((0, length_ticks[31]), (0, attenuation[31]), c='black', lw=1, ls='dotted')
+plt.plot((0, 3), (0, 0), c='black', lw=1, ls='dotted')
+plt.plot((3, 3), (0, attenuation[31]), c='black', lw=1, ls='dotted')
+theta2 = 9 * 2 * np.pi * np.arctan(attenuation[31] / length_ticks[31])
+plt.gca().add_patch(Arc((0, 0), 1.5, 0.56, theta1=0, theta2=theta2, color='black', lw=0.5, ls='dotted'))
+plt.text(1, 0.1, r'$\mu_{eff}$', fontsize=16, color='black')
+
+plt.plot((length_ticks[30], length_ticks[55]), (attenuation[30], attenuation[30]), c='black', lw=1, ls='dashed')
+plt.axline((length_ticks[30], attenuation[30]), (length_ticks[31], attenuation[31]), c='black', lw=1, ls='dashed')
+theta2 = 9 * 2 * np.pi * np.arctan((attenuation[31]-attenuation[30]) / (length_ticks[31]-length_ticks[30]))
+plt.gca().add_patch(Arc((length_ticks[30], attenuation[30]), 1.5, 0.56, theta1=0, theta2=theta2, color='black', lw=1, ls='dashed'))
+plt.text(4.1, 1.34, r'$\bar\mu$', fontsize=16, color='black')
+
+plt.plot(length_ticks, attenuation, c='black', lw=2)
+plt.scatter(length_ticks[::10], attenuation[::10], marker='o', c='black')
+
+plt.xlabel('Толщина, мм', fontsize=28)
+plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=28)
+
+plt.tick_params(direction='in', labelsize='14')
+
+plt.xlim(-0.5, 10.5)
+
+plt.tight_layout()
+# plt.savefig('Fig3a.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
+# %%
 xraydb.add_material('GOS', 'Gd2O2S', 7.34)
 GOS_mus_50 = xraydb.material_mu('GOS', spec_Mo_50_energies * 1000) / 10
 GOS_t_50 = np.exp(-GOS_mus_50 * 22 * 0.001) # (22 * 0.001)mm == 22µm
@@ -199,6 +229,62 @@ plt.grid()
 
 
 # %%
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot(length_ticks, attenuation, label='flat', c='black')
+# plt.scatter(length_ticks[::10], attenuation[::10], marker='o', c='black')
+plt.text(9.5, 2.65, '4', fontstyle='italic', fontsize='12')
+
+plt.plot(length_ticks, attenuation_GOS, label='GadOx 22µm', ls='dashed', lw=1, c='black')
+plt.scatter(length_ticks[::10], attenuation_GOS[::10], marker='o', c='black')
+plt.text(8.5, 2.75, '1', fontstyle='italic', fontsize='12')
+
+plt.plot(length_ticks, attenuation_GOS_1, label='GadOx 10µm', ls='dotted', lw=1, c='black')
+plt.scatter(length_ticks[::10], attenuation_GOS_1[::10], marker='s', c='black')
+plt.text(7.2, 3.1, '2', fontstyle='italic', fontsize='12')
+
+plt.plot(length_ticks, attenuation_CsI, label='CsI 150µm', ls='dashdot', lw=1, c='black')
+plt.scatter(length_ticks[::10], attenuation_CsI[::10], marker='^', c='black')
+plt.text(9.5, 1.9, '3', fontstyle='italic', fontsize='12')
+
+plt.xlabel('Толщина, мм', fontsize=28)
+plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=28)
+plt.xlim(-0.5, 10.5)
+
+plt.tick_params(direction='in', labelsize='14')
+plt.tight_layout()
+# plt.savefig('Fig5b.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
+plt.show()
+
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot([spec_Mo_50_energies[0], 50], [700, 700], label='flat', c='black')
+plt.text(45, 775, '4', fontstyle='italic', fontsize='12')
+
+plt.plot(spec_Mo_50_energies, GOS_eff_50, label='GadOx 22µm', ls='dashed', lw=1, c='black')
+plt.text(35, 350, '1', fontstyle='italic', fontsize='12')
+
+plt.plot(spec_Mo_50_energies, GOS_eff_50_1, label='GadOx 10µm', ls='dotted', lw=1, c='black')
+plt.text(15, 200, '2', fontstyle='italic', fontsize='12')
+
+plt.plot(spec_Mo_50_energies, CsI_eff, label='CsI 150µm', ls='dashdot', lw=1, c='black')
+plt.text(25, 1100, '3', fontstyle='italic', fontsize='12')
+
+plt.xlabel('Энергия, кэВ', fontsize=28)
+plt.ylabel('Число фотонов', fontsize=28)
+plt.xlim(0, 50)
+
+plt.tick_params(direction='in', labelsize='14')
+plt.tight_layout()
+# plt.savefig('Fig5a.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
+plt.show()
+
+
+# %%
 att_k_eff = np.append([np.inf], attenuation[1:] / length_ticks[1:])
 att_k_diff = np.append([np.inf], attenuation[1:] - attenuation[:-1]) / voxel_size
 
@@ -239,6 +325,28 @@ plt.xlabel('Толщина, мм')
 plt.legend(framealpha=1)
 plt.grid()
 # plt.savefig('Fig3b.eps', dpi=600)
+plt.show()
+
+# %%
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot(length_ticks, att_k_eff, c='black', lw=1, ls='dotted', label=r'$µ_{eff}$')
+plt.scatter(length_ticks[::10], att_k_eff[::10], marker='o', c='black')
+plt.plot(length_ticks, att_k_diff, c='black', lw=1, ls='dashed', label=r'$\bar µ$')
+plt.scatter(length_ticks[::10], att_k_diff[::10], marker='s', c='black')
+plt.axline((0, att_SiC[844]), slope=0, c='black', lw=1, label=r'$µ_{SiC} @ 50 KeV$')
+plt.text(2.5, 0.5, '1', fontsize=12, fontstyle='italic')
+plt.text(1.75, 0.37, '2', fontsize=12, fontstyle='italic')
+plt.text(1, 0.15, '3', fontsize=12, fontstyle='italic')
+plt.xlim(-0.5, 10.5)
+plt.ylim(0, 1.1)
+plt.ylabel(r'$мм^{-1}$', fontsize=28)
+plt.xlabel('Толщина, мм', fontsize=28)
+plt.tick_params(direction='in', labelsize='14')
+plt.tight_layout()
+
+# plt.savefig('Fig3b.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
 plt.show()
 
 # %%
@@ -310,6 +418,29 @@ plt.show()
 
 
 # %%
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot(length_ticks, attenuation, label='Экспериментальный спектр', c='black')
+plt.scatter(length_ticks[::10], attenuation[::10], marker='o', c='black')
+plt.text(9.5, 2.2, '1', fontstyle='italic', fontsize=12)
+
+plt.plot(length_ticks, model_attenuation, linestyle=(0, (2, 1)), label='Расчётный спектр', c='black')
+plt.scatter(length_ticks[::10], model_attenuation[::10], facecolors='none', edgecolors='black')
+plt.text(9.5, 3.9, '2', fontstyle='italic', fontsize=12)
+
+plt.xlabel('Толщина, мм', fontsize=28)
+plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=28)
+plt.xlim(-0.5, 10.5)
+
+plt.tick_params(direction='in', labelsize='14')
+plt.tight_layout()
+
+# plt.savefig('Fig4b.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+plt.show()
+
+
+# %%
 plt.plot(model_energies, model_intensities)
 plt.plot(model_energies_0, model_intensities_0)
 plt.plot(spec_Mo_50_energies, spec_Mo_50_0)
@@ -341,6 +472,32 @@ plt.grid()
 plt.legend(framealpha=1)
 plt.title('Карбид кремния, SiC')
 # plt.savefig('Fig9a.eps', dpi=600)
+
+
+# %%
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.scatter(SiC_lengths, SiC_att_0, s=1, marker='.', c='gray', label='Экспериментальные данные')
+plt.text(1, 2, '1', fontstyle='italic', fontsize=12)
+
+plt.plot(length_ticks, attenuation, label='Моделирование: Экспериментальный спектр', c='black')
+plt.scatter(length_ticks[::10], attenuation[::10], marker='o', c='black')
+plt.text(1.3, 1.15, '3', fontstyle='italic', fontsize=12)
+
+plt.plot(length_ticks, model_attenuation, linestyle='dashed', c='black', label='Моделирование: Расчётный спектр')
+plt.scatter(length_ticks[::10], model_attenuation[::10], facecolors='none', edgecolors='black')
+plt.text(1.5, 0.5, '2', fontstyle='italic', fontsize=12)
+
+plt.xlabel('Толщина, мм', fontsize=28)
+plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=28)
+plt.xlim(-0.5, 7.5)
+
+plt.title('Карбид кремния, SiC', fontsize=28)
+
+plt.tick_params(direction='in', labelsize='14')
+plt.tight_layout()
+# plt.savefig('Fig9a.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
 
 
 # %%

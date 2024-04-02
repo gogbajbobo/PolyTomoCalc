@@ -104,6 +104,27 @@ plt.grid()
 plt.show()
 
 # %%
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot(spec_df['keV'], spec_df['nf_gauss_5']/spec_df['nf_gauss_5'].sum(), label='5 мА', c='black')
+plt.text(38, 1e-4, '1', fontstyle='italic', fontsize=12)
+plt.plot(spec_df['keV'], spec_df['nf_gauss_10']/spec_df['nf_gauss_10'].sum(), label='10 мА', ls='dotted', c='black')
+plt.text(48, 1e-4, '2', fontstyle='italic', fontsize=12)
+plt.plot(spec_df['keV'], spec_df['nf_gauss_15']/spec_df['nf_gauss_15'].sum(), label='15 мА', ls='dotted', c='gray')
+plt.text(65, 1e-4, '3', fontstyle='italic', fontsize=12)
+plt.ylim(3e-5, 0.1)
+plt.yscale('log')
+plt.xlabel('Энергия, кэВ', fontsize=28)
+plt.ylabel('Интенсивность, у.е.', fontsize=28)
+
+plt.tick_params(which='both', direction='in', labelsize='14')
+plt.tight_layout()
+# plt.savefig('Fig8.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
+plt.show()
+
+# %%
 plt.plot(spec_df[150:250]['keV'], spec_df[150:250]['nf_gauss_5'], label='5 mA')
 plt.plot(spec_df[150:250]['keV'], spec_df[150:250]['nf_gauss_10'], label='10 mA')
 plt.plot(spec_df[150:250]['keV'], spec_df[150:250]['nf_gauss_15'], label='15 mA')

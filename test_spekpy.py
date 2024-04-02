@@ -139,6 +139,30 @@ plt.show()
 
 
 # %%
+fig, ax = plt.subplots(1, 3, figsize=(12, 2))
+ax[0].plot(energies, intensities, c='black')
+ax[0].set_ylim([2e4, 3e8])
+ax[0].set_yscale('log')
+
+ax[1].plot(energies, intensities_1, c='black')
+ax[1].set_ylim([2e4, 3e8])
+ax[1].set_yscale('log')
+
+ax[2].plot(energies, intensities_2, c='black')
+ax[2].set_ylim([2e4, 3e8])
+ax[2].set_yscale('log')
+
+ax[1].set_xlabel('Энергия, кэВ', fontsize=14)
+ax[0].set_ylabel('Интенсивность', fontsize=14)
+
+ax[0].tick_params(direction='in', labelsize=12)
+ax[1].tick_params(direction='in', labelsize=12)
+ax[2].tick_params(direction='in', labelsize=12)
+
+
+plt.show()
+
+# %%
 s = spekpy.Spek(kvp=50, dk=1, targ='Mo', brem=False)
 s.filter('Air', 1440)
 energies, intensities = s.get_spectrum()
@@ -205,6 +229,33 @@ plt.show()
 # plt.show()
 
 # %%
+fig, ax = plt.subplots(1, 3, figsize=(12, 2))
+ax[0].plot(energies, intensities, c='black')
+ax[0].set_xlim([17.2, 17.8])
+ax[0].set_ylim([2e4, 3e8])
+ax[0].set_yscale('log')
+
+ax[1].plot(energies, intensities_1, c='black')
+ax[1].set_xlim([17.2, 17.8])
+ax[1].set_ylim([2e4, 3e8])
+ax[1].set_yscale('log')
+
+ax[2].plot(energies, intensities_2, c='black')
+ax[2].set_xlim([17.2, 17.8])
+ax[2].set_ylim([2e4, 3e8])
+ax[2].set_yscale('log')
+
+ax[1].set_xlabel('Энергия, кэВ', fontsize=14)
+ax[0].set_ylabel('Интенсивность', fontsize=14)
+
+ax[0].tick_params(direction='in', labelsize=12)
+ax[1].tick_params(direction='in', labelsize=12)
+ax[2].tick_params(direction='in', labelsize=12)
+
+plt.show()
+
+
+# %%
 s = spekpy.Spek(kvp=50, dk=0.25, targ='Mo')
 s.filter('Air', 1440)
 energies, intensities = s.get_spectrum()
@@ -261,6 +312,30 @@ plt.ylabel('Интенсивность, у.е.')
 plt.legend(framealpha=1)
 plt.grid()
 # plt.savefig('Fig4a.eps', dpi=600)
+
+# %%
+plt.figure(figsize=(10, 5))
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot(Mo_spec_poly_50_energies, spec_Mo_50, label='Эксперимент', c='black')
+plt.text(45, 2e-3, '1', fontsize=12, fontstyle='italic')
+
+plt.plot(energies, intensities, label='Расчёт', linestyle='dashed', c='black')
+plt.text(42, 1e-4, '2', fontsize=12, fontstyle='italic')
+
+plt.xlim([5, 55])
+plt.ylim([2e-5, 4e-1])
+plt.yscale('log')
+
+plt.xlabel('Энергия, кэВ', fontsize=28)
+plt.ylabel('Интенсивность, у.е.', fontsize=28)
+
+plt.tick_params(which='both', direction='in', labelsize='14')
+
+plt.tight_layout()
+# plt.savefig('Fig4a.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
 
 # %%
 en_slice = slice(250, 300)

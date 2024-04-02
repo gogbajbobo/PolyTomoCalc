@@ -270,6 +270,34 @@ ax[2].set_title('в', fontsize=24)
 plt.show()
 
 # %%
+fig, ax = plt.subplots(1, 3, figsize=(15, 5), width_ratios=[1, 0.8, 1])
+
+im2show = gaussian(im, sigma=3)
+im2show[im2show < 0] = 0
+im0 = ax[0].imshow(im2show, cmap='gray')
+ax[0].axhline(im2show.shape[0] // 2, linewidth=4, c='white', alpha=0.5)
+cbar = plt.colorbar(im0, ax=ax[0])
+cbar.ax.tick_params(labelsize=14)
+ax[0].set_title('а', fontsize=28)
+
+im1 = ax[1].imshow(bim, cmap='gray')
+ax[1].set_title('б', fontsize=28)
+
+im2 = ax[2].imshow(m_im, cmap='gray')
+cbar = plt.colorbar(im2, ax=ax[2])
+cbar.ax.tick_params(labelsize=14)
+ax[2].set_title('в', fontsize=28)
+
+ax[0].tick_params(labelsize='14')
+ax[1].tick_params(labelsize='14')
+ax[2].tick_params(labelsize='14')
+
+plt.tight_layout()
+# plt.savefig('Fig7abc.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
+plt.show()
+
+# %%
 row = bim.shape[0] // 2
 
 plt.figure(figsize=(10, 5))
@@ -286,6 +314,30 @@ plt.grid()
 plt.legend(framealpha=1)
 
 # plt.savefig('Fig7d.eps', dpi=600)
+plt.show()
+
+# %%
+plt.figure(figsize=(10, 5))
+
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot(exp_row, c='black', label='Эксперимент')
+plt.text(1050, 0.5, '1', fontsize=12, fontstyle='italic')
+
+plt.plot(m_im[row], linestyle='dotted', c='black', label='Моделирование')
+plt.text(1050, 0.3, '2', fontsize=12, fontstyle='italic')
+
+plt.xlabel('воксели', fontsize=28)
+plt.ylabel('Коэффициент\nослабления, 1/мм', fontsize=28)
+
+plt.tick_params(direction='in', labelsize='14')
+
+plt.title('г', fontsize=28)
+
+plt.tight_layout()
+# plt.savefig('Fig7d.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
 plt.show()
 
 # %%
@@ -318,6 +370,27 @@ plt.grid()
 plt.legend(framealpha=1)
 
 # plt.savefig('Fig10b.eps', dpi=600)
+plt.show()
+
+# %%
+plt.figure(figsize=(10, 5))
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot(exp_row, c='black', label='Эксперимент')
+plt.text(1050, 0.38, '1', fontsize=12, fontstyle='italic')
+
+plt.plot(m_im_2[row], linestyle='dotted', c='black', label='Моделирование 2')
+plt.text(1050, 0.55, '2', fontsize=12, fontstyle='italic')
+
+plt.xlabel('воксели', fontsize=28)
+plt.ylabel('Коэффициент\nослабления, 1/мм', fontsize=28)
+
+plt.tick_params(direction='in', labelsize='14')
+
+plt.tight_layout()
+# plt.savefig('Fig10b.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
 plt.show()
 
 # %%

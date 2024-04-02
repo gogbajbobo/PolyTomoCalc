@@ -696,6 +696,34 @@ plt.show()
 
 
 # %%
+fig, ax = plt.subplots(1, 3, figsize=(15, 5), width_ratios=[1, 0.8, 1])
+
+im0 = ax[0].imshow(im_SiC_0, cmap='gray')
+ax[0].axhline(im_SiC_0.shape[0] // 2, linewidth=4, c='white', alpha=0.5)
+cbar = plt.colorbar(im0, ax=ax[0])
+cbar.ax.tick_params(labelsize=14)
+
+ax[0].set_title('а', fontsize=28)
+
+ax[1].imshow(bim_SiC, cmap='gray')
+ax[1].set_title('б', fontsize=28)
+
+im2 = ax[2].imshow(recon_SiC_50_0_eff, cmap='gray')
+cbar = plt.colorbar(im2, ax=ax[2])
+cbar.ax.tick_params(labelsize=14)
+
+ax[2].set_title('в', fontsize=28)
+
+ax[0].tick_params(labelsize='14')
+ax[1].tick_params(labelsize='14')
+ax[2].tick_params(labelsize='14')
+
+plt.tight_layout()
+# plt.savefig('Fig6abc.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
+plt.show()
+
+# %%
 default_blue_color = u'#1f77b4'
 
 plt.figure(figsize=(10, 5))
@@ -707,6 +735,31 @@ plt.legend(framealpha=1)
 plt.grid()
 # plt.savefig('Fig6d.eps', dpi=600)
 plt.show()
+
+# %%
+
+plt.figure(figsize=(10, 5))
+
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент', c='black')
+plt.text(80, 0.9, '1', fontsize=12, fontstyle='italic')
+
+plt.plot(recon_SiC_50_0_eff[h_line_SiC], label='Моделирование', c='black', ls='dotted')
+plt.text(58, 0.5, '2', fontsize=12, fontstyle='italic')
+
+plt.xlabel('воксели', fontsize=28)
+plt.ylabel('Коэффициент\nослабления, 1/мм', fontsize=28)
+plt.title('г', fontsize=28)
+
+plt.tick_params(direction='in', labelsize='14')
+
+plt.tight_layout()
+# plt.savefig('Fig6d.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
+plt.show()
+
 
 # %%
 recon_SiC_50_18, sinogram_50_18 = mu_filled_sum_reconstruction(bim_SiC, poly_SiC_mu_at_depth_50_18)
@@ -1402,6 +1455,27 @@ plt.ylabel('Коэффициент ослабления µ, 1/мм')
 plt.legend(framealpha=1)
 plt.grid()
 # plt.savefig('Fig10a.eps', dpi=600)
+plt.show()
+
+# %%
+plt.figure(figsize=(10, 5))
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.plot(im_SiC_0[h_line_SiC], label='Эксперимент', c='black')
+plt.text(56, 0.7, '1', fontsize=12, fontstyle='italic')
+
+plt.plot(recon_GOS[h_line_SiC], label='Моделирование 2', c='black', ls='dotted')
+plt.text(75, 1.05, '2', fontsize=12, fontstyle='italic')
+
+plt.xlabel('воксели', fontsize=28)
+plt.ylabel('Коэффициент\nослабления, 1/мм', fontsize=28)
+
+plt.tick_params(direction='in', labelsize='14')
+
+plt.tight_layout()
+# plt.savefig('Fig10a.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
 plt.show()
 
 # %%

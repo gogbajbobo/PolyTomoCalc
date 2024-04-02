@@ -237,3 +237,32 @@ plt.show()
 
 
 # %%
+ax = plt.subplot()
+ax.spines[['right', 'top']].set_visible(False)
+
+plt.scatter(ihx_lengths, ihx_att, marker='.', s=1, c='gray', label='Экспериментальные данные')
+plt.text(8.5, 3, '1', fontsize=12, fontstyle='italic')
+
+plt.plot(length_ticks, attenuation, label='Моделирование: Экспериментальный спектр', c='black')
+plt.scatter(length_ticks[::10], attenuation[::10], marker='o', c='black')
+plt.text(1.5, 0.2, '2', fontsize=12, fontstyle='italic')
+
+plt.plot(length_ticks, model_attenuation, ls='dashed', c='black', label='Моделирование: Расчётный спектр')
+plt.scatter(length_ticks[::10], model_attenuation[::10], facecolors='none', edgecolors='black')
+plt.text(1.25, 1.1, '3', fontsize=12, fontstyle='italic')
+
+plt.xlabel('Толщина, мм', fontsize=28)
+plt.ylabel(r'$–ln\frac{\Phi (x)}{\Phi _0}$', fontsize=28)
+plt.xlim(-0.5, 9.2)
+
+plt.title(r'Йогексол, $C_{19}H_{26}I_3N_3O_9$', fontsize=28)
+
+plt.tick_params(direction='in', labelsize='14')
+
+plt.tight_layout()
+# plt.savefig('Fig9b.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
+
+
+plt.show()
+
+# %%
