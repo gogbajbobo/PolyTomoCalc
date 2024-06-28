@@ -259,14 +259,16 @@ fig, ax = plt.subplots(1, 2, figsize=(10, 5))
 im_0 = ax[0].imshow(recon_0, cmap='gray')
 cbar = plt.colorbar(im_0, ax=ax[0])
 cbar.ax.tick_params(labelsize=14)
+cbar.set_label('Коэффициент\nослабления, 1/мм', fontsize=28)
 
 ax[0].axhline(recon_0.shape[0]//2, linewidth=4, c='white', alpha=0.5)
 im_1 = ax[1].imshow(recon_1, cmap='gray')
 cbar = plt.colorbar(im_1, ax=ax[1])
 cbar.ax.tick_params(labelsize=14)
+cbar.set_label('Коэффициент\nослабления, 1/мм', fontsize=28)
 
 ax[1].axhline(recon_0.shape[0]//2, linewidth=4, c='white', alpha=0.5)
-plt.suptitle('а', fontsize=28)
+plt.suptitle('(а)', fontsize=28, font='Times New Roman')
 
 ax[0].tick_params(labelsize='14')
 ax[1].tick_params(labelsize='14')
@@ -287,10 +289,10 @@ plt.text(126, 1.23, '1', fontsize=12, fontstyle='italic')
 plt.plot(recon_1[row], label='SiC + Fe', c='black', ls='dotted')
 plt.text(142, 1.32, '2', fontsize=12, fontstyle='italic')
 
-plt.xlabel('воксели', fontsize=28)
+plt.xlabel('Номер вокселя', fontsize=28)
 plt.ylabel('Коэффициент\nослабления, 1/мм', fontsize=28)
 
-plt.suptitle('б', fontsize=28)
+plt.suptitle('(б)', fontsize=28, font='Times New Roman')
 
 plt.tick_params(direction='in', labelsize='14')
 

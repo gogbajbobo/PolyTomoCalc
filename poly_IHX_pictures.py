@@ -278,15 +278,17 @@ im0 = ax[0].imshow(im2show, cmap='gray')
 ax[0].axhline(im2show.shape[0] // 2, linewidth=4, c='white', alpha=0.5)
 cbar = plt.colorbar(im0, ax=ax[0])
 cbar.ax.tick_params(labelsize=14)
-ax[0].set_title('а', fontsize=28)
+cbar.set_label('Коэффициент\nослабления, 1/мм', fontsize=28)
+ax[0].set_title('(а)', fontdict={'fontsize': 28, 'font': 'Times New Roman'}, pad=32)
 
 im1 = ax[1].imshow(bim, cmap='gray')
-ax[1].set_title('б', fontsize=28)
+ax[1].set_title('(б)', fontdict={'fontsize': 28, 'font': 'Times New Roman'}, pad=32)
 
 im2 = ax[2].imshow(m_im, cmap='gray')
 cbar = plt.colorbar(im2, ax=ax[2])
 cbar.ax.tick_params(labelsize=14)
-ax[2].set_title('в', fontsize=28)
+cbar.set_label('Коэффициент\nослабления, 1/мм', fontsize=28)
+ax[2].set_title('(в)', fontdict={'fontsize': 28, 'font': 'Times New Roman'}, pad=32)
 
 ax[0].tick_params(labelsize='14')
 ax[1].tick_params(labelsize='14')
@@ -328,12 +330,12 @@ plt.text(1050, 0.5, '1', fontsize=12, fontstyle='italic')
 plt.plot(m_im[row], linestyle='dotted', c='black', label='Моделирование')
 plt.text(1050, 0.3, '2', fontsize=12, fontstyle='italic')
 
-plt.xlabel('воксели', fontsize=28)
+plt.xlabel('Номер вокселя', fontsize=28)
 plt.ylabel('Коэффициент\nослабления, 1/мм', fontsize=28)
 
 plt.tick_params(direction='in', labelsize='14')
 
-plt.title('г', fontsize=28)
+plt.title('(г)', fontdict={'fontsize': 28, 'font': 'Times New Roman'}, pad=32)
 
 plt.tight_layout()
 # plt.savefig('Fig7d.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
@@ -383,10 +385,11 @@ plt.text(1050, 0.38, '1', fontsize=12, fontstyle='italic')
 plt.plot(m_im_2[row], linestyle='dotted', c='black', label='Моделирование 2')
 plt.text(1050, 0.55, '2', fontsize=12, fontstyle='italic')
 
-plt.xlabel('воксели', fontsize=28)
+plt.xlabel('Номер вокселя', fontsize=28)
 plt.ylabel('Коэффициент\nослабления, 1/мм', fontsize=28)
 
 plt.tick_params(direction='in', labelsize='14')
+plt.suptitle('(б)', fontsize=28, font='Times New Roman')
 
 plt.tight_layout()
 # plt.savefig('Fig10b.tiff', dpi=300, format="tiff", pil_kwargs={"compression": "tiff_lzw"})
